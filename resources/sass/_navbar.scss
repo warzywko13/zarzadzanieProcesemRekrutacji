@@ -1,0 +1,13 @@
+#app > .navbar {
+    background: $primary;
+}
+
+#login-panel, #register-panel {
+    color: $secondary;
+    font-weight: bold;
+
+    .h1 {
+        font-size: 25px;
+        text-transform: uppercase;
+    }
+}

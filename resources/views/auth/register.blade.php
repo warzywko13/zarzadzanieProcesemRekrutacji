@@ -13,27 +13,6 @@
                     <div class="row justify-content-center mb-3">
                         <div class="col-md-10">
                             <input
-                                id="name"
-                                type="text"
-                                placeholder="{{ __('Nazwa') }}"
-                                class="form-control @error('name') is-invalid @enderror"
-                                name="name"
-                                value="{{ old('name') }}"
-                                required autocomplete="name"
-                                autofocus
-                            >
-
-                            @error('name')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-                    </div>
-
-                    <div class="row justify-content-center mb-3">
-                        <div class="col-md-10">
-                            <input
                                 id="email"
                                 type="email"
                                 placeholder="{{ __('E-mail') }}"

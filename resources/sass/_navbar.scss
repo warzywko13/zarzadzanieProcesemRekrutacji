@@ -1,5 +1,12 @@
-#app > .navbar {
-    background: $primary;
+#app {
+    > .navbar {
+        background: $primary;
+        min-height: 40px;
+
+        .nav-link {
+            color: $secondary;
+        }
+    }
 }
 
 #login-panel, #register-panel {
@@ -11,3 +18,4 @@
         text-transform: uppercase;
     }
 }
+

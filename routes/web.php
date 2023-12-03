@@ -15,13 +15,15 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     if(Auth::check()) {
-        return view('home');
+        // Sprawdzanie czy jest rekruterem
+        if(Auth::user()->is_recruiter) {
+            return (new App\Http\Controllers\HomeController)->index();
+        } else {
+            return (new App\Http\Controllers\CandidateController)->index();
+        }
     } else {
         return view('auth.login');
     }
-});
+})->name('home');
 
 Auth::routes();
-
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

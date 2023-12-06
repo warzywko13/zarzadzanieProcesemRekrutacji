@@ -21,7 +21,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('phone')->nullable();
             $table->string('post_code')->nullable();
-            $table->integer('street')->nullable();
+            $table->string('street')->nullable();
             $table->integer('street_number')->nullable();
             $table->integer('flat_number')->nullable();
             $table->unsignedBigInteger('photo_id')->nullable();

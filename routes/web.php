@@ -1,6 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CandidateController;
+use App\Http\Controllers\HomeController;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,13 +16,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::match(['GET', 'POST'], '/addedit', [CandidateController::class, 'index'])->name('addEdit');
+Route::get('/', [HomeController::class, 'index'])->middleware('recruiter')->name('index');
+
 Route::get('/', function () {
     if(Auth::check()) {
         // Sprawdzanie czy jest rekruterem
         if(Auth::user()->is_recruiter) {
-            return (new App\Http\Controllers\HomeController)->index();
+            return redirect(route('index'));
         } else {
-            return (new App\Http\Controllers\CandidateController)->index();
+            return redirect(route('addEdit'));
         }
     } else {
         return view('auth.login');

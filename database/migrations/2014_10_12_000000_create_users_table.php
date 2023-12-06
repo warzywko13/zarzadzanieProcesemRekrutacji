@@ -24,6 +24,9 @@ return new class extends Migration
             $table->string('street')->nullable();
             $table->integer('street_number')->nullable();
             $table->integer('flat_number')->nullable();
+            $table->integer('position_id')->nullable();
+            $table->string('position_name')->nullable();
+            $table->timestamp('start_from')->nullable();
             $table->unsignedBigInteger('photo_id')->nullable();
             $table->integer('is_recruiter')->default(0);
             $table->integer('deleted')->default(0);

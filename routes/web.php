@@ -16,7 +16,7 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::match(['GET', 'POST'], '/addedit', [CandidateController::class, 'index'])->name('addEdit');
+Route::match(['GET', 'POST'], '/addedit', [CandidateController::class, 'index'])->middleware('auth')->name('addEdit');
 Route::get('/', [HomeController::class, 'index'])->middleware('recruiter')->name('index');
 
 Route::get('/', function () {

@@ -8,6 +8,67 @@
     <form method="POST" action="{{route('addEdit')}}">
         @csrf
         <div class="accordion mt-5" id="accordionPanels">
+            {{-- Szukam --}}
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#looking_for" aria-expanded="true" aria-controls="looking_for">
+                        {{ __('Szukam') }}
+                    </button>
+                </h2>
+                <div id="looking_for" class="accordion-collapse collapse show">
+                    <div class="accordion-body">
+
+                        {{-- Docelowe stanowisko --}}
+                        <div class="input-group">
+                            <label for="position_id" class="col-sm-2 col-form-label">{{ __('Docelowe stanowisko') }}</label>
+                            <div class="col-sm-10">
+                                <div class="input-group mb-3">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" @if(!empty($personal_data->position_id)) aria-disabled="true" @endif  id="position_id" name="position_id[]" value="{{ isset($personal_data->position_id) ? $personal_data->position_id : '' }}">
+                                        <div class="input-group-text">
+                                          <input
+                                              class="form-check-input mt-0 me-2"
+                                              onclick="onLocationCheckbox()"
+                                              type="checkbox"
+                                              id="position_checkbox"
+                                              @if(!empty($personal_data->position_id)) checked @endif
+                                              aria-label="{{ __('Trwa nadal') }}"
+                                          >
+                                          {{ __('Inne') }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Docelowe stanowisko inne --}}
+                        <div class="mb-3 row" id="position_name_label">
+                            <label for="position_name" class="col-sm-2 col-form-label">{{ __('Podaj stanowisko') }}</label>
+                            <div class="col-sm-10">
+                                <input type="text" required class="form-control" id="position_name" name="position_name" value="{{ isset($personal_data->position_name) ? $personal_data->position_name : '' }}">
+                            </div>
+                        </div>
+
+                        {{-- Lokalizacja --}}
+                        <div class="mb-3 row">
+                            <label for="location" class="col-sm-2 col-form-label">{{ __('Lokalizacja') }}</label>
+                            <div class="col-sm-10">
+                                <input type="text" required class="form-control" id="location" name="location" value="{{ isset($personal_data->location) ? $personal_data->location : '' }}">
+                            </div>
+                        </div>
+
+                        {{-- Od kiedy mogę zacząć --}}
+                        <div class="mb-3 row">
+                            <label for="start_date" class="col-sm-2 col-form-label">{{ __('Data rozpoczęcia') }}</label>
+                            <div class="col-sm-10">
+                              <input type="date" class="form-control" id="exstart_date" name="start_date" value="{{ isset($personal_data->start_date) ? $personal_data->start_date : '' }}">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
             {{-- Dane osobowe --}}
             <div class="accordion-item">
               <h2 class="accordion-header">
@@ -100,17 +161,18 @@
                 </button>
               </h2>
               <div id="work-expirience" class="accordion-collapse collapse show">
-                <input id="expirience_last" value="{{ $work_expirience['count'] }}" type="hidden" >
+                <div class="accordion-body">
+                    <input id="expirience_last" value="{{ $work_expirience['count'] }}" type="hidden" >
 
-                {!! $work_expirience['result'] !!}
-
+                    {!! $work_expirience['result'] !!}
+                </div>
               </div>
             </div>
 
             {{-- Wykształcenie --}}
             <div class="accordion-item">
               <h2 class="accordion-header">
-                <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="education" aria-expanded="true" aria-controls="education">
+                <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#education" aria-expanded="true" aria-controls="education">
                     {{ __('Wykształcenie') }}
                 </button>
               </h2>
@@ -119,20 +181,37 @@
                     <input id="education_last" value="{{ $education['count'] }}" type="hidden" >
 
                     {!! $education['result'] !!}
+                </div>
+            </div>
 
-              </div>
+            {{-- Umiejętności --}}
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#skills" aria-expanded="true" aria-controls="skills">
+                        {{ __('Umiejętności') }}
+                    </button>
+                </h2>
+                <div id="skills" class="accordion-collapse collapse show">
+                    <div class="accordion-body">
+                        <input id="skills_last" value={{ $skills['count'] }} type="hidden" >
+
+                        {!! $skills['result'] !!}
+                    </div>
+                </div>
             </div>
 
             {{-- Zainteresowania --}}
             <div class="accordion-item">
                 <h2 class="accordion-header">
-                    <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="true" aria-controls="panelsStayOpen-collapseFour">
+                    <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#interests" aria-expanded="true" aria-controls="interests">
                         {{ __('Zainteresowania') }}
                     </button>
                 </h2>
-                <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse show">
+                <div id="interests" class="accordion-collapse collapse show">
                     <div class="accordion-body">
+                        <input id="interests_last" value={{ $interests['count'] }} type="hidden" >
 
+                        {!! $interests['result'] !!}
                     </div>
                 </div>
             </div>
@@ -284,6 +363,62 @@
 
     }
 
+    function addNewSkill() {
+        const skills = $('#skills');
+
+        const last = $('#skills_last').val();
+        $('#skills_last').val(+last + 1);
+        const index = $('#skills_last').val();
+
+        // @TODO Dodać zabezpiecznie max 10
+
+        skills.append(`
+            <div class="accordion-body border" index="${index}">
+                <input type="hidden" name="skill_id[]" value="" >
+
+                <div class="row">
+                    <div class="mb-3 row">
+                        <label for="skill_name_${index}" class="col-sm-2 col-form-label">{{ __('Nazwa umiejętności') }}</label>
+                        <div class="col-sm-10">
+                        <input type="text" class="form-control" id="skill_name_${index}" name="skill_name[]" value="">
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" class="btn btn-primary addButton" onclick="addNewSkill()">{{ __('Dodaj Pozycję') }}</button>
+                <button type="button" class="btn btn-primary delButton" onclick="removePosition(${index})">{{ __('Usuń Pozycję') }}</button>
+            </div>
+        `);
+    }
+
+    function addNewInt() {
+        const interests = $('#interests');
+
+        const last = $('#interests_last').val();
+        $('#interests_last').val(+last + 1);
+        const index = $('#interests_last').val();
+
+        // @TODO Dodać zabezpieczenie max 10
+
+        interests.append(`
+            <div class="accordion-body border" index="${index}">
+                <input type="hidden" name="int_id[]" value="" >
+
+                <div class="row">
+                    <div class="mb-3 row">
+                        <label for="int_name_${index}" class="col-sm-2 col-form-label">{{ __('Nazwa zainteresowania') }}</label>
+                        <div class="col-sm-10">
+                        <input type="text" class="form-control" id="int_name_${index}" name="int_name[]" value="">
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" class="btn btn-primary addButton" onclick="addNewInt()">{{ __('Dodaj Pozycję') }}</button>
+                <button type="button" class="btn btn-primary delButton" onclick="removePosition(${index})">{{ __('Usuń Pozycję') }}</button>
+            </div>`
+        );
+    }
+
     function removePosition(index) {
         $(`.accordion-body[index="${index}"]`).remove();
     }
@@ -294,12 +429,25 @@
 
         if(checked) {
             $('#' + prefix + '_end_date_' + index).attr('aria-disabled', true);
-            $('#' + prefix + 'exp_end_date_' + index).val('');
+            $('#' + prefix + '_end_date_' + index).val('');
         } else {
             $('#' + prefix + '_end_date_' + index).attr("aria-disabled", false);
         }
 
         target.val(checked ? 1 : 0);
+    }
+
+    function onLocationCheckbox() {
+        const target = $('#position');
+        const checked = $('#position_checkbox').prop('checked');
+
+        // if(checked) {
+
+        // } else {
+
+        // }
+
+        // tar
     }
 </script>
 @endsection

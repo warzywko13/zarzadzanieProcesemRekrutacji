@@ -5,7 +5,12 @@
         <div class="mb-3 row">
             <label for="int_name_{{ $index }}" class="col-sm-2 col-form-label">{{ __('Nazwa zainteresowania') }}</label>
             <div class="col-sm-10">
-              <input type="text" class="form-control" id="int_name_{{ $index }}" name="int_name[]" value="{{ isset($int->name) ? $int->name : '' }}">
+                <input type="text" class="form-control" id="int_name_{{ $index }}" name="int_name[]" value="{{ isset($int->name) ? $int->name : '' }}">
+                @isset($int->error['name'])
+                    <p class="text-danger fw-bold">
+                        {{ $int->error['name'] }}
+                    </p>
+                @endisset
             </div>
         </div>
     </div>

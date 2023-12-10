@@ -5,7 +5,12 @@
         <div class="mb-3 row">
             <label for="skill_name_{{ $index }}" class="col-sm-2 col-form-label">{{ __('Nazwa umiejętności') }}</label>
             <div class="col-sm-10">
-              <input type="text" class="form-control" id="skill_name_{{ $index }}" name="skill_name[]" value="{{ isset($skill->name) ? $skill->name : '' }}">
+                <input type="text" class="form-control" id="skill_name_{{ $index }}" name="skill_name[]" value="{{ isset($skill->name) ? $skill->name : '' }}">
+                @isset($skill->error['name'])
+                    <p class="text-danger fw-bold">
+                        {{ $skill->error['name'] }}!
+                    </p>
+                @endisset
             </div>
         </div>
     </div>

@@ -17,13 +17,13 @@ use Illuminate\Http\Request;
 */
 
 Route::match(['GET', 'POST'], '/addedit', [CandidateController::class, 'index'])->middleware('auth')->name('addEdit');
-Route::get('/', [HomeController::class, 'index'])->middleware('recruiter')->name('index');
+Route::get('/recruiter', [HomeController::class, 'index'])->middleware('recruiter')->name('recruterHome');
 
 Route::get('/', function () {
     if(Auth::check()) {
         // Sprawdzanie czy jest rekruterem
         if(Auth::user()->is_recruiter) {
-            return redirect(route('index'));
+            return redirect(route('recruterHome'));
         } else {
             return redirect(route('addEdit'));
         }

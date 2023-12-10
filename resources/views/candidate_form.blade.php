@@ -44,6 +44,11 @@
                                         </div>
                                     </div>
                                 </div>
+                                @isset($user->error['position_id'])
+                                    <p class="text-danger fw-bold">
+                                        {{ $user->error['position_id'] }}
+                                    </p>
+                                @endisset
                             </div>
                         </div>
 
@@ -52,6 +57,11 @@
                             <label for="position_name" class="col-sm-2 col-form-label">{{ __('Podaj stanowisko') }}</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control" id="position_name" name="position_name" value="{{ isset($user->position_name) ? $user->position_name : '' }}">
+                                @isset($user->error['position_name'])
+                                    <p class="text-danger fw-bold">
+                                        {{ $user->error['position_name'] }}
+                                    </p>
+                                @endisset
                             </div>
                         </div>
 
@@ -280,7 +290,9 @@
                 </div>
             </div>
 
-            <button type="submit" name="save" value="1" class="btn btn-primary addButton">{{ __('Zapisz') }}</button>
+            <div class="container btn-lg">
+                <button type="submit" name="save" value="1" class="d-block mx-auto btn btn-primary addButton my-2 px-5 py-2">{{ __('Zapisz Formularz') }}</button>
+            </div>
     </form>
 </div>
 @endsection

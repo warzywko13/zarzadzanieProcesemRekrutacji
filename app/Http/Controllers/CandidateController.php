@@ -114,6 +114,17 @@ class CandidateController extends Controller
         $skill = $form_datas['skill'];
 
         // Walidacja usera
+
+        if($user->position_manual == 0) {
+            if(empty($user->position_id)) {
+                $user->error['position_id'] = __('Docelowe stanowisko nie może być puste');
+            }
+        } else {
+            if(empty($user->position_name)) {
+                $user->error['position_name'] = __('Podaj stanowisko nie może być puste');
+            }
+        }
+
         if(empty($user->firstname)) {
             $user->error['firstname'] = __('Imię nie może być puste');
             $error++;
@@ -126,6 +137,11 @@ class CandidateController extends Controller
 
         if(empty($user->email)) {
             $user->error['email'] = __('Email nie może być pusty');
+            $error++;
+        }
+
+        if(empty($user->phone)) {
+            $user->error['phone'] = __('Numer telefonu nie może być pusty');
             $error++;
         }
 
@@ -185,7 +201,7 @@ class CandidateController extends Controller
             }
 
             if(empty($edu->name)) {
-                $edu->errror['name'] = __('Nazwa uczelni nie może być pusta');
+                $edu->error['name'] = __('Nazwa uczelni nie może być pusta');
                 $error++;
             }
 
@@ -222,6 +238,11 @@ class CandidateController extends Controller
 
     public function index(Request $request)
     {
+        // Recruiter don't have access to this page
+        if(Auth::user()->is_recruiter) {
+            return redirect(route('recruterHome'));
+        }
+
         $user_id = Auth::id();
         $data = [];
 

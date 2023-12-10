@@ -22,7 +22,6 @@ return new class extends Migration
             $table->timestamps();
 
             // Foregin key
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('deleted_by')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('updated_by')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');

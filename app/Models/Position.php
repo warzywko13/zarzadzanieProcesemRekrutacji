@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Interest extends Model
+class Position extends Model
 {
     use HasFactory;
 
@@ -14,8 +14,7 @@ class Interest extends Model
      *
      * @var array<int, string>
      */
-     protected $fillable = [
-        'user_id',
+    protected $fillable = [
         'name',
     ];
 }

@@ -5,7 +5,7 @@
 
     <h1 class="text-center h1">| {{ __('Formularz kandydata') }} |</h1>
 
-    <form method="POST" action="{{route('addEdit')}}">
+    <form method="POST" action="{{route('addEdit')}}" enctype="multipart/form-data">
         @csrf
         <div class="accordion mt-5" id="accordionPanels">
             {{-- Szukam --}}
@@ -17,6 +17,7 @@
                 </h2>
                 <div id="looking_for" class="accordion-collapse collapse show">
                     <div class="accordion-body">
+                        <input type="hidden" name="position_manual" id="position_manual" value="{{ $user->position_manual }}">
 
                         {{-- Docelowe stanowisko --}}
                         <div class="input-group">
@@ -24,14 +25,19 @@
                             <div class="col-sm-10">
                                 <div class="input-group mb-3">
                                     <div class="input-group">
-                                        <input type="text" class="form-control" @if(!empty($personal_data->position_id)) aria-disabled="true" @endif  id="position_id" name="position_id[]" value="{{ isset($personal_data->position_id) ? $personal_data->position_id : '' }}">
+                                        <select class="form-select" id="position_id" name="position_id" aria-label="{{ __('Docelowe stanowisko') }}" @if($user->position_manual == 1) disabled @endif>
+                                            <option @empty($user->position_id) selected @endempty value="">{{ __('Wybierz') }}</option>
+                                            @foreach ($all_personal_datas as $users)
+                                                <option @if($users->id == $user->availability) selected @endif value="{{ $users->id }}" >{{ $users->name }}</option>
+                                            @endforeach
+                                        </select>
                                         <div class="input-group-text">
                                           <input
                                               class="form-check-input mt-0 me-2"
-                                              onclick="onLocationCheckbox()"
+                                              onclick="onPositionCheckbox()"
                                               type="checkbox"
                                               id="position_checkbox"
-                                              @if(!empty($personal_data->position_id)) checked @endif
+                                              @if($user->position_manual == 1) checked @endif
                                               aria-label="{{ __('Trwa nadal') }}"
                                           >
                                           {{ __('Inne') }}
@@ -42,10 +48,10 @@
                         </div>
 
                         {{-- Docelowe stanowisko inne --}}
-                        <div class="mb-3 row" id="position_name_label">
+                        <div class="mb-3 row {{ $user->position_manual == 0 ? 'd-none' : ''  }}" id="position_name_label">
                             <label for="position_name" class="col-sm-2 col-form-label">{{ __('Podaj stanowisko') }}</label>
                             <div class="col-sm-10">
-                                <input type="text" required class="form-control" id="position_name" name="position_name" value="{{ isset($personal_data->position_name) ? $personal_data->position_name : '' }}">
+                                <input type="text" class="form-control" id="position_name" name="position_name" value="{{ isset($user->position_name) ? $user->position_name : '' }}">
                             </div>
                         </div>
 
@@ -53,15 +59,20 @@
                         <div class="mb-3 row">
                             <label for="location" class="col-sm-2 col-form-label">{{ __('Lokalizacja') }}</label>
                             <div class="col-sm-10">
-                                <input type="text" required class="form-control" id="location" name="location" value="{{ isset($personal_data->location) ? $personal_data->location : '' }}">
+                                <input type="text" class="form-control" id="location" name="location" value="{{ isset($user->location) ? $user->location : '' }}">
                             </div>
                         </div>
 
                         {{-- Od kiedy mogę zacząć --}}
                         <div class="mb-3 row">
-                            <label for="start_date" class="col-sm-2 col-form-label">{{ __('Data rozpoczęcia') }}</label>
+                            <label for="availability" class="col-sm-2 col-form-label">{{ __('Dostępność') }}</label>
                             <div class="col-sm-10">
-                              <input type="date" class="form-control" id="exstart_date" name="start_date" value="{{ isset($personal_data->start_date) ? $personal_data->start_date : '' }}">
+                                <select class="form-select" name="availability" aria-label="{{ __('Płeć')}}">
+                                    <option @empty($user->availability) selected @endempty value="">{{ __('Dowolna') }}</option>
+                                    <option @if($user->availability == 1) @endif value="1">{{ __('Miesiąc') }}</option>
+                                    <option @if($user->availability == 2) selected @endif value="2">{{ __('2 Miesiące') }}</option>
+                                    <option @if($user->availability == 3) selected @endif value="3">{{ __('3 Miesiące') }}</option>
+                                </select>
                             </div>
                         </div>
 
@@ -72,18 +83,23 @@
             {{-- Dane osobowe --}}
             <div class="accordion-item">
               <h2 class="accordion-header">
-                <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#personal_data" aria-expanded="true" aria-controls="personal_data">
+                <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#user" aria-expanded="true" aria-controls="user">
                     {{ __('Dane osobowe') }}
                 </button>
               </h2>
-              <div id="personal_data" class="accordion-collapse collapse show">
+              <div id="user" class="accordion-collapse collapse show">
                 <div class="accordion-body">
 
                     {{-- Imię --}}
                     <div class="mb-3 row">
                         <label for="firstname" class="col-sm-2 col-form-label">{{ __('Imię') }}</label>
                         <div class="col-sm-10">
-                          <input type="text" required class="form-control" id="firstname" name="firstname" value="{{ $personal_data->firstname }}">
+                            <input type="text" class="form-control" id="firstname" name="firstname" value="{{ $user->firstname }}">
+                            @isset($user->error['firstname'])
+                                <p class="text-danger fw-bold">
+                                    {{ $user->error['firstname'] }}!
+                                </p>
+                            @endisset
                         </div>
                     </div>
 
@@ -91,7 +107,12 @@
                     <div class="mb-3 row">
                         <label for="lastname" class="col-sm-2 col-form-label">{{ __('Nazwisko') }}</label>
                         <div class="col-sm-10">
-                          <input type="text" class="form-control" id="lastname" name="lastname" value="{{ $personal_data->lastname }}">
+                            <input type="text" class="form-control" id="lastname" name="lastname" value="{{ $user->lastname }}">
+                            @isset($user->error['lastname'])
+                                <p class="text-danger fw-bold">
+                                    {{ $user->error['lastname'] }}!
+                                </p>
+                            @endisset
                         </div>
                     </div>
 
@@ -99,11 +120,16 @@
                     <div class="mb-3 row">
                         <label for="sex" class="col-sm-2 col-form-label">{{ __('Płeć') }}</label>
                         <div class="col-sm-10">
-                        <select class="form-select" name="sex" aria-label="{{ __('Płeć')}}">
-                            <option @empty($personal_data->sex) selected @endempty>{{ __('Wybierz') }}</option>
-                            <option @if($personal_data->sex == 1) @endif value="1">{{ __('Kobieta') }}</option>
-                            <option @if($personal_data->sex == 2) selected @endif value="2">{{ __('Mężczyzna') }}</option>
-                        </select>
+                            <select class="form-select" name="sex" aria-label="{{ __('Płeć')}}">
+                                <option @empty($user->sex) selected @endempty value="">{{ __('Wybierz') }}</option>
+                                <option @if($user->sex == 1) @endif value="1">{{ __('Kobieta') }}</option>
+                                <option @if($user->sex == 2) selected @endif value="2">{{ __('Mężczyzna') }}</option>
+                            </select>
+                            @isset($user->error['sex'])
+                                <p class="text-danger fw-bold">
+                                    {{ $user->error['sex'] }}!
+                                </p>
+                            @endisset
                         </div>
                     </div>
 
@@ -111,7 +137,12 @@
                     <div class="mb-3 row">
                         <label for="email" class="col-sm-2 col-form-label">{{ __('Email') }}</label>
                         <div class="col-sm-10">
-                          <input type="text" readonly class="form-control-plaintext" id="email" name="email" value="{{ $personal_data->email }}">
+                            <input type="text" readonly class="form-control-plaintext" id="email" name="email" value="{{ $user->email }}">
+                            @isset($user->error['email'])
+                                <p class="text-danger fw-bold">
+                                    {{ $user->error['email'] }}!
+                                </p>
+                            @endisset
                         </div>
                     </div>
 
@@ -119,7 +150,12 @@
                     <div class="mb-3 row">
                         <label for="phone" class="col-sm-2 col-form-label">{{ __('Numer telefonu') }}</label>
                         <div class="col-sm-10">
-                          <input type="text" class="form-control" id="phone" name="phone" value="{{ $personal_data->phone }}">
+                            <input type="text" class="form-control" id="phone" name="phone" value="{{ $user->phone }}">
+                            @isset($error['phone'])
+                                <p class="text-danger fw-bold">
+                                    {{ $error['phone'] }}!
+                                </p>
+                            @endisset
                         </div>
                     </div>
 
@@ -127,7 +163,12 @@
                     <div class="mb-3 row">
                         <label for="street" class="col-sm-2 col-form-label">{{ __('Ulica') }}</label>
                         <div class="col-sm-10">
-                          <input type="text" class="form-control" id="street" name="street" value="{{ $personal_data->street }}">
+                            <input type="text" class="form-control" id="street" name="street" value="{{ $user->street }}">
+                            @isset($error['street'])
+                                <p class="text-danger fw-bold">
+                                    {{ $error['street'] }}!
+                                </p>
+                            @endisset
                         </div>
                     </div>
 
@@ -135,7 +176,12 @@
                     <div class="mb-3 row">
                         <label for="street_number" class="col-sm-2 col-form-label">{{ __('Numer domu') }}</label>
                         <div class="col-sm-10">
-                          <input type="text" class="form-control" id="street_number" name="street_number" value="{{ $personal_data->street_number }}">
+                            <input type="text" class="form-control" id="street_number" name="street_number" value="{{ $user->street_number }}">
+                            @isset($error['street_number'])
+                                <p class="text-danger fw-bold">
+                                    {{ $error['street_number'] }}!
+                                </p>
+                            @endisset
                         </div>
                     </div>
 
@@ -143,12 +189,30 @@
                     <div class="mb-3 row">
                         <label for="flat_number" class="col-sm-2 col-form-label">{{ __('Numer lokalu') }}</label>
                         <div class="col-sm-10">
-                          <input type="text" class="form-control" id="flat_number" name="flat_number" value="{{ $personal_data->flat_number }}">
+                            <input type="text" class="form-control" id="flat_number" name="flat_number" value="{{ $user->flat_number }}">
+                            @isset($error['flat_number'])
+                                <p class="text-danger fw-bold">
+                                    {{ $error['flat_number'] }}!
+                                </p>
+                            @endisset
                         </div>
                     </div>
 
                     {{-- Zdjęcie --}}
-
+                    <div class="mb-3 row">
+                        <label for="image" class="col-sm-2 col-form-label">{{ __('Zdjęcie') }}</label>
+                        <div class="col-sm-10">
+                            @isset($user->image)
+                                <img class="mb-3" style="width: 15rem; height: 15rem;" src="data:image/jpeg;base64,{{ $user->image }}" />
+                            @endisset
+                            <input type="file" name="image" class="form-control custom-file-input">
+                        </div>
+                        @isset($error['image'])
+                            <p class="text-danger fw-bold">
+                                {{ $error['image'] }}!
+                            </p>
+                        @endisset
+                    </div>
                 </div>
               </div>
             </div>
@@ -156,15 +220,15 @@
             {{-- Doświadczenie zawodowe --}}
             <div class="accordion-item">
               <h2 class="accordion-header">
-                <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#work-expirience" aria-expanded="true" aria-controls="work-expirience">
+                <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#expirience" aria-expanded="true" aria-controls="expirience">
                     {{ __('Doświadczenie zawodowe') }}
                 </button>
               </h2>
-              <div id="work-expirience" class="accordion-collapse collapse show">
+              <div id="expirience" class="accordion-collapse collapse show">
                 <div class="accordion-body">
-                    <input id="expirience_last" value="{{ $work_expirience['count'] }}" type="hidden" >
+                    <input id="expirience" value="{{ $expirience['count'] }}" type="hidden" >
 
-                    {!! $work_expirience['result'] !!}
+                    {!! $expirience['result'] !!}
                 </div>
               </div>
             </div>
@@ -187,15 +251,15 @@
             {{-- Umiejętności --}}
             <div class="accordion-item">
                 <h2 class="accordion-header">
-                    <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#skills" aria-expanded="true" aria-controls="skills">
+                    <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#skill" aria-expanded="true" aria-controls="skill">
                         {{ __('Umiejętności') }}
                     </button>
                 </h2>
-                <div id="skills" class="accordion-collapse collapse show">
+                <div id="skill" class="accordion-collapse collapse show">
                     <div class="accordion-body">
-                        <input id="skills_last" value={{ $skills['count'] }} type="hidden" >
+                        <input id="skill_last" value={{ $skill['count'] }} type="hidden" >
 
-                        {!! $skills['result'] !!}
+                        {!! $skill['result'] !!}
                     </div>
                 </div>
             </div>
@@ -223,9 +287,14 @@
 
 
 @section('script')
+<script type="module">
+    $(document).ready(function() {
+        $('.form-select').select2(/*{minimumResultsForSearch: -1}*/);
+    });
+</script>
 <script>
     function addNewPosition() {
-        const workExpirience = $('#work-expirience');
+        const expirience = $('#expirience');
 
         const last = $('#expirience_last').val();
         $('#expirience_last').val(+last + 1);
@@ -233,7 +302,7 @@
 
         // Dodać zabezpieczenie max 5
 
-        workExpirience.append(`
+        expirience.append(`
             <div class="accordion-body border" index="${index}">
                 <input type="hidden" name="exp_id[]">
                 <input type="hidden" id="exp_in_progress_${index}" name="exp_in_progress[]" value="">
@@ -364,15 +433,15 @@
     }
 
     function addNewSkill() {
-        const skills = $('#skills');
+        const skill = $('#skill');
 
-        const last = $('#skills_last').val();
-        $('#skills_last').val(+last + 1);
-        const index = $('#skills_last').val();
+        const last = $('#skill_last').val();
+        $('#skill_last').val(+last + 1);
+        const index = $('#skill_last').val();
 
         // @TODO Dodać zabezpiecznie max 10
 
-        skills.append(`
+        skill.append(`
             <div class="accordion-body border" index="${index}">
                 <input type="hidden" name="skill_id[]" value="" >
 
@@ -428,26 +497,35 @@
         const checked = $('#' + prefix + '_checkbox_' + index).prop('checked');
 
         if(checked) {
-            $('#' + prefix + '_end_date_' + index).attr('aria-disabled', true);
+            $('#' + prefix + '_end_date_' + index).attr('readonly', true);
             $('#' + prefix + '_end_date_' + index).val('');
         } else {
-            $('#' + prefix + '_end_date_' + index).attr("aria-disabled", false);
+            $('#' + prefix + '_end_date_' + index).attr("readonly", false);
         }
 
         target.val(checked ? 1 : 0);
     }
 
-    function onLocationCheckbox() {
-        const target = $('#position');
+    function onPositionCheckbox() {
         const checked = $('#position_checkbox').prop('checked');
+        const position_id = $('#position_id');
+        const position_label = $('#position_name_label');
+        const position_manual = $('#position_manual');
+        const position_name = $('#position_name');
 
-        // if(checked) {
+        $('#postion_manual').val(checked ? 1 : 0);
 
-        // } else {
-
-        // }
-
-        // tar
+        if(checked) {
+            position_manual.val(1);
+            position_id.val(null).trigger('change');
+            position_id.prop('disabled', true);
+            position_label.removeClass('d-none');
+        } else {
+            position_manual.val(0);
+            position_id.prop('disabled', false);
+            position_label.addClass('d-none');
+            position_name.val(null);
+        }
     }
 </script>
 @endsection

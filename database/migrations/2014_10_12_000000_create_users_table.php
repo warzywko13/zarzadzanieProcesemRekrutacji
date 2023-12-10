@@ -25,8 +25,10 @@ return new class extends Migration
             $table->integer('street_number')->nullable();
             $table->integer('flat_number')->nullable();
             $table->integer('position_id')->nullable();
+            $table->integer('position_manual')->default(0);
             $table->string('position_name')->nullable();
-            $table->timestamp('start_from')->nullable();
+            $table->string('location')->nullable();
+            $table->integer('availability')->nullable();
             $table->unsignedBigInteger('photo_id')->nullable();
             $table->integer('is_recruiter')->default(0);
             $table->integer('deleted')->default(0);

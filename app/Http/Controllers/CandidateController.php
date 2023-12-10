@@ -2,16 +2,223 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Education;
-use App\Models\Expirience;
-use App\Models\Interest;
-use App\Models\Skill;
+use App\Http\Controllers\Candidate\PositionController;
+use App\Http\Controllers\Candidate\SkillController;
+use App\Models\Position;
 use App\Models\User;
+use App\Models\Photo;
+
+use App\Http\Controllers\Candidate\ExpirienceController;
+use App\Http\Controllers\Candidate\EducationController;
+use App\Http\Controllers\Candidate\InterestsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CandidateController extends Controller
 {
+    private object $ExpirienceController;
+    private object $EducationController;
+    private object $InterestsController;
+    private object $SkillController;
+
+    function __construct()
+    {
+        $this->ExpirienceController = new ExpirienceController();
+        $this->EducationController = new EducationController();
+        $this->InterestsController = new InterestsController();
+        $this->SkillController = new SkillController();
+    }
+
+    private function get_form_data($user_id, $form): array
+    {
+        $data = [];
+
+        // Get Personal Data
+        $data['user'] = (object)[
+            'firstname'         => $form['firstname'],
+            'lastname'          => $form['lastname'],
+            'sex'               => $form['sex'],
+            'email'             => $form['email'],
+            'phone'             => $form['phone'],
+            'street'            => $form['street'],
+            'street_number'     => $form['street_number'],
+            'flat_number'       => $form['flat_number'],
+            'position_id'       => $form['position_id'] ?? null,
+            'position_name'     => $form['position_name'] ?? null,
+            'position_manual'   => $form['position_manual'],
+            'availability'      => $form['availability'],
+            'location'          => $form['location'],
+        ];
+
+        // Get Photo Data
+
+
+        // Get Expirience Data
+        foreach($form['exp_start_date'] as $index => $value) {
+            $data['expirience'][] = (object) [
+                'id'                => $form['exp_id'][$index],
+                'user_id'           => $user_id,
+                'start_date'        => $form['exp_start_date'][$index],
+                'end_date'          => $form['exp_end_date'][$index] == '1970-01-01' ? null : $form['exp_end_date'][$index],
+                'name'              => $form['exp_company_name'][$index],
+                'position'          => $form['exp_position'][$index],
+                'in_progress'       => $form['exp_in_progress'][$index] ?: 0,
+                'responsibilities'  => $form['exp_responsibilities'][$index],
+            ];
+        }
+
+        // Get Education Data
+        foreach($form['edu_start_date'] as $index => $value) {
+            $data['education'][] = (object)[
+                'id'                => $form['edu_id'][$index],
+                'user_id'           => $user_id,
+                'start_date'        => $form['edu_start_date'][$index],
+                'end_date'          => $form['edu_end_date'][$index],
+                'name'              => $form['edu_education_name'][$index],
+                'title'             => $form['edu_title'][$index],
+                'in_progress'       => $form['exp_in_progress'][$index] ?: 0,
+            ];
+        }
+
+        // Get Interest Data
+        foreach($form['int_name'] as $index => $value) {
+            $data['interest'][] = (object)[
+                'id' => $form['int_id'][$index],
+                'name' => $form['int_name'][$index],
+                'user_id' => $user_id
+            ];
+        }
+
+        // Get Skill Data
+        foreach($form['skill_name'] as $index => $value) {
+            $data['skill'][] = (object)[
+                'id' => $form['skill_id'][$index],
+                'name' => $form['skill_name'][$index],
+                'user_id' => $user_id
+            ];
+        }
+
+
+        return $data;
+    }
+
+    private function validate_form_data($form_datas)
+    {
+        $error = 0;
+
+        $user = $form_datas['user'];
+        $image = $form_datas['image'];
+        $expirience = $form_datas['expirience'];
+        $education = $form_datas['education'];
+        $interest = $form_datas['interest'];
+        $skill = $form_datas['skill'];
+
+        // Walidacja usera
+        if(empty($user->firstname)) {
+            $user->error['firstname'] = __('Imię nie może być puste');
+            $error++;
+        }
+
+        if(empty($user->lastname)) {
+            $user->error['lastname'] = __('Nazwisko nie może być puste');
+            $error++;
+        }
+
+        if(empty($user->email)) {
+            $user->error['email'] = __('Email nie może być pusty');
+            $error++;
+        }
+
+        // Walidacja Photo data
+        if(!empty($image)) {
+            $allowedTypes = ["jpeg", "png"];
+            $extenstion = $image->getClientOriginalExtension();
+
+            if(!in_array($extenstion, $allowedTypes)) {
+                $user->error['image'] = __('Format zdjęcia jest nieprawidłowy. Obsługiwane formaty to JPEG oraz PNG');
+                $error++;
+            }
+        }
+
+        // Walidacja Expirience Data
+        foreach($expirience as $exp) {
+            if(empty($exp->start_date)) {
+                $exp->error['start_date'] = __('Data rozpoczęcia nie może być pusta');
+                $error++;
+            }
+
+            if($exp->in_progress == 0) {
+                if(empty($exp->end_date)) {
+                    $exp->error['end_date'] = __('Jeżeli nie jest zazaczone') . ' "' . __('Trwa nadal') . '" ' . __('Data zakończenia nie może być pusta');
+                    $error++;
+                } else {
+                    if(!($exp->start_date > $exp->end_date)) {
+                        $exp->error['end_date'] = __('Data zakończenia nie może być większa od daty rozpoczęcia');
+                        $error++;
+                    }
+                }
+            }
+
+            if(empty($exp->name)) {
+                $exp->error['name'] = __('Nazwa firmy nie może być pusta');
+                $error++;
+            }
+        }
+
+        // Walidacja Education Data
+        foreach($education as $edu) {
+            if(empty($edu->start_date)) {
+                $edu->error['start_date'] = __('Data rozpoczęcia nie może być pusta');
+                $error++;
+            }
+
+            if($edu->in_progress == 0) {
+                if(empty($edu->end_date)) {
+                    $edu->error['end_date'] = __('Jeżeli nie jest zazaczone') . ' "' . __('Trwa nadal') . '" ' . __('Data zakończenia nie może być pusta');
+                    $error++;
+                } else {
+                    if(!($edu->start_date > $edu->end_date)) {
+                        $edu->error['end_date'] = __('Data zakończenia nie może być większa od daty rozpoczęcia');
+                        $error++;
+                    }
+                }
+            }
+
+            if(empty($edu->name)) {
+                $edu->errror['name'] = __('Nazwa uczelni nie może być pusta');
+                $error++;
+            }
+
+        }
+
+        // Walidacja Skill Data
+        foreach($skill as $ski) {
+            if(empty($ski->name)) {
+                $ski->error['name'] = __('Nazwa umiejętności nie może być pusta');
+            }
+        }
+
+        // Walidacja Interest Data
+        foreach($interest as $int) {
+            if(empty($int->name)) {
+                $int->error['name'] = __('Nazwa zaintersowania nie może być pusta');
+                $error++;
+            }
+        }
+
+        $form_datas['user'] = $user;
+        $form_datas['image'] = $image;
+        $form_datas['expirience'] = $expirience;
+        $form_datas['education'] = $education;
+        $form_datas['interest'] = $interest;
+        $form_datas['skill'] = $skill;
+
+        if($error > 0) {
+            $form_datas['error'] = 1;
+        }
+
+        return $form_datas;
+    }
 
     public function index(Request $request)
     {
@@ -24,393 +231,102 @@ class CandidateController extends Controller
 
             // Get Form data
             $form_datas = $this->get_form_data($user_id, $form);
-
+            $form_datas['image'] = $request->file('image');
 
             // @TODO We have all data now Validate it
+            $form_datas = $this->validate_form_data($form_datas);
 
+            if(!$form_datas['error']) {
+                // Everything ok let's add to db
 
-            // Everything ok let's add to db
-            //User
-            $this->updateUser($user_id, $form_datas);
+                // Photo
+                if($form_datas['image']) {
+                    $form_datas['user']->photo_id = $this->updatePhoto($user_id, $form_datas);
+                }
 
-            // Expirience
-            $this->addUpdateExpirience($user_id, $form_datas);
+                // User
+                $this->updateUser($user_id, $form_datas);
 
-            // Education
-            $this->addUpdateEducation($user_id, $form_datas);
+                // Expirience
+                $this->ExpirienceController->addUpdateExpirience($user_id, $form_datas);
 
-            // Skills
-            $this->addUpdateSkill($user_id, $form_datas);
+                // Education
+                $this->EducationController->addUpdateEducation($user_id, $form_datas);
 
-            // Interests
-            $this->addUpdateInterest($user_id, $form_datas);
+                // Skills
+                $this->SkillController->addUpdateSkill($user_id, $form_datas);
 
+                // Interests
+                $this->InterestsController->addUpdateInterest($user_id, $form_datas);
+            } else {
+                $data['user'] = $form_datas['user'];
+                $data['expirience'] = $this->ExpirienceController->renderForm($form_datas['expirience']);
+                $data['education'] = $this->EducationController->renderForm($form_datas['education']);
+                $data['interests'] = $this->InterestsController->renderForm($form_datas['interest']);
+                $data['skill'] = $this->SkillController->renderForm($form_datas['skill']);
+
+                $data['all_personal_datas'] = Position::where('deleted', 0)->get();
+
+                return view('candidate_form', $data);
+            }
         }
 
-        $data['personal_data'] = $this->get_personal_data($user_id);
-        $data['work_expirience'] = $this->get_work_expirience($user_id);
-        $data['education'] = $this->get_education($user_id);
-        $data['interests'] = $this->get_interests($user_id);
-        $data['skills'] = $this->get_skills($user_id);
+        $data['user'] = $this->get_personal_data($user_id);
+        $data['expirience'] = $this->ExpirienceController->get_expirience($user_id);
+        $data['education'] = $this->EducationController->get_education($user_id);
+        $data['interests'] = $this->InterestsController->get_interests($user_id);
+        $data['skill'] = $this->SkillController->get_skills($user_id);
+
+        $data['all_personal_datas'] = Position::where('deleted', 0)->get();
 
         return view('candidate_form', $data);
+
     }
-
-
     // Get
-
-    private function get_work_expirience(int $user_id)
-    {
-        $work_expiriences = Expirience::where('user_id', $user_id)->where('deleted', 0)->cursor();
-        $result = null;
-
-        if(!$work_expiriences->isEmpty()) {
-            $i = 0;
-            foreach($work_expiriences as $work_expirience) {
-                $result .= view('candidate.work_expirience', ['exp' => $work_expirience, 'index' => $i]);
-                $i++;
-            }
-        } else {
-            $result .= view('candidate.work_expirience', ['index' => 0]);
-        }
-
-        return [
-            'result' => $result,
-            'count' => Expirience::where('user_id', $user_id)->where('deleted', 0)->count()
-        ];
-    }
 
     private function get_personal_data(int $user_id)
     {
-        return User::find($user_id);
-    }
+        $user = User::find($user_id);
+        $photo = Photo::find($user->photo_id);
 
-    private function get_education(int $user_id)
-    {
-        $educations = Education::where('user_id', $user_id)->where('deleted', 0)->cursor();
-        $result = null;
-
-        if(!$educations->isEmpty()) {
-            $i = 0;
-            foreach($educations as $education) {
-                $result .= view('candidate.education', ['edu' => $education ,'index' => $i]);
-                $i++;
-            }
-        } else {
-            $result .= view('candidate.education', ['index' => 0]);
+        if($photo) {
+            $user->image = $photo->data;
         }
 
-        return [
-            'result' => $result,
-            'count' => Education::where('user_id', $user_id)->where('deleted', 0)->count()
-        ];
-    }
-
-    private function get_interests(int $user_id)
-    {
-        $interests = Interest::where('user_id', $user_id)->where('deleted', 0)->cursor();
-        $result = null;
-
-        if(!$interests->isEmpty()) {
-            $i = 0;
-            foreach($interests as $interest) {
-                $result .= view('candidate.interest', ['int' => $interest, 'index' => $i]);
-                $i++;
-            }
-        } else {
-            $result .= view('candidate.interest', ['index' => 0]);
-        }
-
-        return [
-            'result' => $result,
-            'count' => Interest::where('user_id', $user_id)->where('deleted', 0)->count()
-        ];
-    }
-
-    private function get_skills(int $user_id)
-    {
-        $skills = Skill::where('user_id', $user_id)->where('deleted', 0)->cursor();
-        $result = null;
-
-        if(!$skills->isEmpty()) {
-            $i = 0;
-            foreach($skills as $skill) {
-                $result .= view('candidate.skill', ['skill' => $skill, 'index' => $i]);
-                $i++;
-            }
-        } else {
-            $result .= view('candidate.skill', ['index' => 0]);
-        }
-
-        return [
-            'result' => $result,
-            'count' => Skill::where('user_id', $user_id)->where('deleted', 0)->count()
-        ];
-    }
-
-    private function get_form_data($user_id, $form): array
-    {
-        $data = [];
-
-        // Get Personal Data
-        $data['user'] = [
-            'firstname'     => $form['firstname'],
-            'lastname'      => $form['lastname'],
-            'sex'           => $form['sex'],
-            'email'         => $form['email'],
-            'phone'         => $form['phone'],
-            'street'        => $form['street'],
-            'street_number' => $form['street_number'],
-            'flat_number'   => $form['flat_number'],
-            'position_id'   => $form['position_id'],
-            'position_name' => $form['position_name'],
-            'start_from'    => $form['start_from'],
-        ];
-
-        // Get Photo Data
-
-
-        // Get Expirience Data
-        foreach($form['exp_start_date'] as $index => $value) {
-            $data['expirience'][] = [
-                'id'                => $form['exp_id'][$index],
-                'user_id'           => $user_id,
-                'start_date'        => $form['exp_start_date'][$index],
-                'end_date'          => $form['exp_end_date'][$index] == '1970-01-01' ? null : $form['exp_end_date'][$index],
-                'name'              => $form['exp_company_name'][$index],
-                'position'          => $form['exp_position'][$index],
-                'in_progress'       => $form['exp_in_progress'][$index],
-                'responsibilities'  => $form['exp_responsibilities'][$index],
-            ];
-        }
-
-        // Get Education Data
-        foreach($form['edu_start_date'] as $index => $value) {
-            $data['education'][] = [
-                'id'                => $form['edu_id'][$index],
-                'user_id'           => $user_id,
-                'start_date'        => $form['edu_start_date'][$index],
-                'end_date'          => $form['edu_end_date'][$index],
-                'name'              => $form['edu_education_name'][$index],
-                'title'             => $form['edu_title'][$index],
-                'in_progress'       => $form['exp_in_progress'][$index],
-            ];
-        }
-
-        // Get Interest Data
-        foreach($form['int_name'] as $index => $value) {
-            $data['interest'][] = [
-                'id' => $form['int_id'][$index],
-                'name' => $form['int_name'][$index],
-                'user_id' => $user_id
-            ];
-        }
-
-        // Get Skill Data
-        foreach($form['skill_name'] as $index => $value) {
-            $dat['skill'][] = [
-                'id' => $form['skill_id'][$index],
-                'name' => $form['skill_name'][$index],
-                'user_id' => $user_id
-            ];
-        }
-
-
-        return $data;
+        return $user;
     }
 
     // Add Update
+
+    private function updatePhoto($user_id, $form_datas)
+    {
+        // Remove old photo
+        $user = User::find($user_id)->where('deleted', 0)->first();
+        if($user->photo_id) {
+            Photo::find($user->photo_id)->where('deleted', 0)->update([
+                'deleted' => '1',
+                'deleted_at' => date('Y-m-d H:i:s'),
+            ]);
+        }
+
+        // Add new photo
+        $image = $form_datas['image'];
+
+        $data = file_get_contents($image);
+        $imageName = $image->getClientOriginalName();
+
+        $params['name'] = $imageName;
+        $params['data'] = base64_encode($data);
+
+        return Photo::insertGetId($params);
+    }
 
     private function updateUser($user_id, $form_datas)
     {
         $user = User::find($user_id)->where('deleted', 0);
         $user->updated_at = date('Y-m-d H:i:s');
         $user->updated_by = $user_id;
-        $user->update($form_datas['user']);
+        $user->update((array) $form_datas['user']);
     }
 
-
-    private function addUpdateExpirience($user_id, $form_datas)
-    {
-        // Delete Expirience
-        $records = Expirience::where('user_id', $user_id)->where('deleted', 0)->get();
-        $to_delete = [];
-
-        foreach($records as $record) {
-            $found = false;
-
-            foreach($form_datas['expirience'] as $exp) {
-                if($record->id == $exp['id']) {
-                    $found = true;
-                    break;
-                }
-            }
-
-            if(!$found) {
-                $to_delete[] = $record->id;
-            }
-        }
-
-        if($to_delete) {
-            Expirience::whereIn('id', $to_delete)->update([
-                'deleted' => '1',
-                'deleted_at' => date('Y-m-d H:i:s'),
-                'deleted_by' => $user_id
-            ]);
-        }
-
-        // Add Update Expirience
-        foreach($form_datas['expirience'] as $exp) {
-            if($exp['id']) {
-                $record = Expirience::where('id', $exp['id']);
-                if($record) {
-                    $exp['updated_by'] = $user_id;
-                    $record->update($exp);
-                    continue;
-                }
-            }
-
-            unset($exp['id']);
-            $exp['created_by'] = $user_id;
-            Expirience::create($exp);
-        }
-    }
-
-    private function addUpdateEducation($user_id, $form_datas)
-    {
-        // Delete Education
-        $records = Education::where('user_id', $user_id)->where('deleted', 0)->get();
-        $to_delete = [];
-
-        foreach($records as $record) {
-            $found = false;
-
-            foreach($form_datas['education'] as $edu) {
-                if($record->id == $edu['id']) {
-                    $found = true;
-                    break;
-                }
-            }
-
-            if(!$found) {
-                $to_delete[] = $record->id;
-            }
-        }
-
-        if($to_delete) {
-            Education::whereIn('id', $to_delete)->update([
-                'deleted' => '1',
-                'deleted_at' => date('Y-m-d H:i:s'),
-                'deleted_by' => $user_id
-            ]);
-        }
-
-        // Add Update Education
-        foreach($form_datas['education'] as $edu) {
-            if($edu['id']) {
-                $record = Education::where('id', $edu['id']);
-                if($record) {
-                    $exp['updated_by'] = $user_id;
-                    $record->update($exp);
-                    continue;
-                }
-            }
-
-            unset($edu['id']);
-            $edu['created_by'] = $user_id;
-            Education::create($edu);
-        }
-    }
-
-    private function addUpdateInterest($user_id, $form_datas)
-    {
-        $records = Interest::where('user_id', $user_id)->where('deleted', 0)->get();
-        $to_delete = [];
-
-        // Delete Interest
-        foreach($records as $record) {
-            $found = false;
-
-            foreach($form_datas['interest'] as $int) {
-                if($record->id == $int['id']) {
-                    $found = true;
-                    break;
-                }
-            }
-
-            if(!$found) {
-                $to_delete[] = $record->id;
-            }
-        }
-
-        if($to_delete) {
-            Interest::whereIn('id', $to_delete)->update([
-                'deleted' => '1',
-                'deleted_at' => date('Y-m-d H:i:s'),
-                'deleted_by' => $user_id
-            ]);
-        }
-
-        // Add Update Interest
-        foreach($form_datas['interest'] as $edu) {
-            if($edu['id']) {
-                $record = Interest::where('id', $edu['id']);
-                if($record) {
-                    $exp['updated_by'] = $user_id;
-                    $record->update($exp);
-                    continue;
-                }
-            }
-
-            unset($edu['id']);
-            $edu['created_by'] = $user_id;
-            Interest::create($edu);
-        }
-    }
-
-    private function addUpdateSkill($user_id, $form_datas)
-    {
-        $records = Skill::where('user_id', $user_id)->where('deleted', 0)->get();
-        $to_delete = [];
-
-        // Delete Skill
-        foreach($records as $record) {
-            $found = false;
-
-            foreach($form_datas['skill'] as $int) {
-                if($record->id == $int['id']) {
-                    $found = true;
-                    break;
-                }
-            }
-
-            if(!$found) {
-                $to_delete[] = $record->id;
-            }
-        }
-
-        if($to_delete) {
-            Skill::whereIn('id', $to_delete)->update([
-                'deleted' => '1',
-                'deleted_at' => date('Y-m-d H:i:s'),
-                'deleted_by' => $user_id
-            ]);
-        }
-
-        // Add Update Skill
-        foreach($form_datas['skill'] as $skill) {
-            if($skill['id']) {
-                $record = Skill::where('id', $skill['id']);
-                if($record) {
-                    $skill['updated_by'] = $user_id;
-                    $record->update($skill);
-                    continue;
-                }
-            }
-
-            unset($skill['id']);
-            $skill['created_by'] = $user_id;
-            Skill::create($skill);
-        }
-    }
 }

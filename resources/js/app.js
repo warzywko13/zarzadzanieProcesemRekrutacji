@@ -1,4 +1,7 @@
 import './bootstrap';
 
-import jQuery from 'jquery';
-window.$ = jQuery;
+import $ from 'jquery';
+window.$ = $;
+
+import select2 from 'select2';
+select2($);

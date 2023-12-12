@@ -199,30 +199,28 @@ class RecruiterController extends Controller
 
         $results = DB::select($sql);
 
+        // Convert id to name
         foreach ($results as $result) {
             if (!empty($result->sex)) {
-                $result->sex = $result->sex == 1 ? __('Mężczyzna') : __('Kobieta'); // Fixed the comparison
+                $filter = $this->filter->get_sex();
+                foreach($filter as $sex) {
+                    if($result->sex == $sex->id) {
+                        $result->sex = $sex->name;
+                        break;
+                    }
+                }
             }
 
-            switch ($result->availability) {
-                case 1:
-                    $result->availability = __('Od zaraz');
-                    break;
-
-                case 2:
-                    $result->availability = __('Miesiąc');
-                    break;
-
-                case 3:
-                    $result->availability = __('2 Miesiące');
-                    break;
-
-                case 4:
-                    $result->availability = __('3 Miesiące');
-                    break;
-
-                default:
-                    $result->availability = __('Dowolna'); // Fixed the typo in 'availability'
+            if(!empty($result->availability)) {
+                $filter = $this->filter->get_availability();
+                foreach($filter as $av) {
+                    if($av->id == $result->availability) {
+                        $result->availability = $av->name;
+                        break;
+                    }
+                }
+            } else {
+                $result->availability = __('Dowolna');
             }
         }
 

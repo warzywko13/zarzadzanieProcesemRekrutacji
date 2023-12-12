@@ -36,8 +36,10 @@
                 <div class="form-group mt-2">
                     <label for="sex" class="col-form-label">{{ __('Płeć') }}:</label>
                     <select class="form-select" id="sex" name="sex">
-                        <option @if(isset($selected['sex']) && $selected['sex'] == 1 ) selected @endif value="1">{{ __('Mężczyzna') }}</option>
-                        <option @if(isset($selected['sex']) && $selected['sex'] == 2 ) selected @endif value="2">{{ __('Kobieta') }}</option>
+                        <option value="">{{ __('Wybierz') }}</option>
+                        @foreach ($filter['sex'] as $sex)
+                            <option @if(isset($selected['sex']) && $selected['sex'] == $sex->id) selected @endif value="{{ $sex->id }}">{{ $sex->name }}</option>
+                        @endforeach
                     </select>
                 </div>
             </div>
@@ -78,10 +80,9 @@
                 <div class="form-group mt-2">
                     <label for="availability" class="col-form-label">{{ __('Dostępność') }}</label>
                     <select class="form-select" multiple name="availability[]" aria-label="{{ __('Dostępność')}}">
-                        <option @if(isset($selected['availability']) && in_array(1, $selected['availability'])) selected @endif value="1">{{ __('Od zaraz') }}</option>
-                        <option @if(isset($selected['availability']) && in_array(2, $selected['availability'])) selected @endif value="2">{{ __('Miesiąc') }}</option>
-                        <option @if(isset($selected['availability']) && in_array(3, $selected['availability'])) selected @endif value="3">{{ __('2 Miesiące') }}</option>
-                        <option @if(isset($selected['availability']) && in_array(4, $selected['availability'])) selected @endif value="4">{{ __('3 Miesiące') }}</option>
+                        @foreach($filter['availability'] as $av)
+                            <option @if(isset($selected['availability']) && in_array($av->id, $selected['availability'])) selected @endif value="{{ $av->id }}">{{ $av->name }}</option>
+                        @endforeach
                     </select>
                 </div>
 

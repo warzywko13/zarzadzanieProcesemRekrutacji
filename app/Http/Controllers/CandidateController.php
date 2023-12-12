@@ -22,6 +22,7 @@ class CandidateController extends Controller
     private object $InterestsController;
     private object $SkillController;
     private object $UserController;
+    private object $FilterController;
 
     function __construct()
     {
@@ -30,6 +31,7 @@ class CandidateController extends Controller
         $this->InterestsController = new InterestsController();
         $this->SkillController = new SkillController();
         $this->UserController = new UserController();
+        $this->FilterController = new FilterController();
     }
 
     private function get_form_data($user_id, $form): array
@@ -149,7 +151,7 @@ class CandidateController extends Controller
             $data['interests'] = $this->InterestsController->renderForm($form_datas['interest'], $disabled);
             $data['skill'] = $this->SkillController->renderForm($form_datas['skill'], $disabled);
 
-            $data['all_personal_datas'] = Position::where('deleted', 0)->get();
+            $data['filter'] = $this->FilterController->get_candidate_filter_data();
 
             return view('candidate_form', $data);
         }
@@ -161,7 +163,7 @@ class CandidateController extends Controller
         $data['skill'] = $this->SkillController->get_skills($user_id, $disabled);
 
         $data['disabled'] = $disabled;
-        $data['all_personal_datas'] = Position::where('deleted', 0)->get();
+        $data['filter'] = $this->FilterController->get_candidate_filter_data();
 
         return view('candidate_form', $data);
     }

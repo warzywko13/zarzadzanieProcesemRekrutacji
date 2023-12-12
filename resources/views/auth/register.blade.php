@@ -11,7 +11,7 @@
                     @csrf
 
                     <div class="row justify-content-center mb-3">
-                        <div class="col-md-10">
+                        <div class="col-10">
                             <input
                                 id="email"
                                 type="email"
@@ -32,7 +32,7 @@
                     </div>
 
                     <div class="row justify-content-center mb-3">
-                        <div class="col-md-10">
+                        <div class="col-10">
                             <input
                                 id="password"
                                 type="password"
@@ -52,7 +52,7 @@
                     </div>
 
                     <div class="row justify-content-center mb-3">
-                        <div class="col-md-10">
+                        <div class="col-10">
                             <input
                                 id="password-confirm"
                                 type="password"

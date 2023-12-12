@@ -27,9 +27,8 @@
                                     <div class="input-group">
                                         <div class="col-10 col-xl-11">
                                             <select class="form-select" id="position_id" {{ $disabled }} name="position_id" aria-label="{{ __('Docelowe stanowisko') }}" @if($user->position_manual == 1) disabled @endif>
-                                                <option @empty($user->position_id) selected @endempty value="">{{ __('Wybierz') }}</option>
-                                                @foreach ($all_personal_datas as $users)
-                                                    <option @if($users->id == $user->position_id) selected @endif value="{{ $users->id }}" >{{ $users->name }}</option>
+                                                @foreach ($filter['positions'] as $position)
+                                                    <option @if($position->id == $user->position_id) selected @endif value="{{ $position->id }}" >{{ $position->name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -81,10 +80,9 @@
                             <label for="availability" class="col-12 col-md-2 col-form-label">{{ __('Dostępność') }}</label>
                             <div class="col-12 col-md-10">
                                 <select class="form-select" {{ $disabled }} name="availability" aria-label="{{ __('Dostępność')}}">
-                                    <option @if($user->availability == 1) @endif value="1">{{ __('Od zaraz') }}</option>
-                                    <option @if($user->availability == 2) selected @endif value="2">{{ __('Miesiąc') }}</option>
-                                    <option @if($user->availability == 3) selected @endif value="3">{{ __('2 Miesiące') }}</option>
-                                    <option @if($user->availability == 4) selected @endif value="4">{{ __('3 Miesiące') }}</option>
+                                    @foreach($filter['availability'] as $av)
+                                        <option @if($av->id == $user->availability) selected @endif value="{{ $av->id }}">{{ $av->name }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -147,9 +145,9 @@
                         <label for="sex" class="col-12 col-md-2 col-form-label">{{ __('Płeć') }}</label>
                         <div class="col-12 col-md-10">
                             <select class="form-select" {{ $disabled }} name="sex" aria-label="{{ __('Płeć')}}">
-                                <option @empty($user->sex) selected @endempty value="">{{ __('Wybierz') }}</option>
-                                <option @if($user->sex == 1) @endif value="1">{{ __('Kobieta') }}</option>
-                                <option @if($user->sex == 2) selected @endif value="2">{{ __('Mężczyzna') }}</option>
+                                @foreach ($filter['sex'] as $sex)
+                                    <option @if($user->sex == $sex->id) selected @endif value="{{ $sex->id }}">{{ $sex->name }}</option>
+                                @endforeach
                             </select>
                             @isset($user->error['sex'])
                                 <p class="text-danger fw-bold">

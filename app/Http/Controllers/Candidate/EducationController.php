@@ -8,20 +8,20 @@ use App\Models\Education;
 
 class EducationController extends Controller
 {
-    public function renderForm($educations = null)
+    public function renderForm($educations = null, string $disabled = '')
     {
         $result = null;
         $i = 0;
 
         if($educations) {
             foreach($educations as $edu) {
-                $result .= view('candidate.education', ['edu' => $edu, 'index' => $i]);
+                $result .= view('candidate.education', ['edu' => $edu, 'index' => $i, 'disabled' => $disabled]);
                 $i++;
             }
         }
 
         if(empty($result)) {
-            $result .= view('candidate.education', ['index' => $i]);
+            $result .= view('candidate.education', ['index' => $i, 'disabled' => $disabled]);
         }
 
         return [
@@ -30,10 +30,10 @@ class EducationController extends Controller
         ];
     }
 
-    public function get_education(int $user_id)
+    public function get_education(int $user_id, string $disabled = '')
     {
         $educations = Education::where('user_id', $user_id)->where('deleted', 0)->cursor();
-        return $this->renderForm($educations);
+        return $this->renderForm($educations, $disabled);
     }
 
     public function addUpdateEducation($user_id, $form_datas)

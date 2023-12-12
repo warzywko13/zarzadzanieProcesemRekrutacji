@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\CandidateController;
-use App\Http\Controllers\HomeController;
+use App\Http\Controllers\CandidateController;;
+use App\Http\Controllers\RecruiterController;
 use Illuminate\Http\Request;
 
 /*
@@ -17,7 +17,12 @@ use Illuminate\Http\Request;
 */
 
 Route::match(['GET', 'POST'], '/addedit', [CandidateController::class, 'index'])->middleware('auth')->name('addEdit');
-Route::get('/recruiter', [HomeController::class, 'index'])->middleware('recruiter')->name('recruterHome');
+
+Route::get('/recruiter', [RecruiterController::class, 'index'])->middleware('recruiter')->name('recruterHome');
+Route::get('/positions', [RecruiterController::class, 'positons'])->middleware('recruiter')->name('recruterPosition');
+Route::get('/positions/delete/{id}', [RecruiterController::class, 'delete_position'])->middleware('recruiter')->name('deletePosition');
+Route::match(['GET', 'POST'], '/positions/addEdit', [RecruiterController::class, 'addedit_position'])->middleware('recruiter')->name('addEditPosition');
+
 
 Route::get('/', function () {
     if(Auth::check()) {

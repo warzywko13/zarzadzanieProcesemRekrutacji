@@ -23,9 +23,20 @@
 
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <!-- Left Side Of Navbar -->
-                        <ul class="navbar-nav me-auto">
-
-                        </ul>
+                        @if(isset(Auth::user()->is_recruiter))
+                            <ul class="navbar-nav me-auto">
+                                <li class="nav-item">
+                                    <a href="{{ route('recruterHome') }}" class="nav-link">
+                                        {{ __('Lista użytkowników') }}
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('recruterPosition') }}" class="nav-link">
+                                        {{ __('Lista pozycji') }}
+                                    </a>
+                                </li>
+                            </ul>
+                        @endif
 
                         <!-- Right Side Of Navbar -->
                         <ul class="navbar-nav ms-auto">
@@ -70,6 +81,12 @@
         @if (session('status'))
             <div class="alert alert-success" role="alert">
                 {{ session('status') }}
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div class="alert alert-danger" role="alert">
+                {{ session('error') }}
             </div>
         @endif
 

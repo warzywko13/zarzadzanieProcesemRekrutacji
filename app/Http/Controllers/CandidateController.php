@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Candidate\PositionController;
 use App\Http\Controllers\Candidate\SkillController;
 use App\Models\Position;
 use App\Models\User;
@@ -13,6 +12,7 @@ use App\Http\Controllers\Candidate\EducationController;
 use App\Http\Controllers\Candidate\InterestsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class CandidateController extends Controller
 {
@@ -37,6 +37,7 @@ class CandidateController extends Controller
         $data['user'] = (object)[
             'firstname'         => $form['firstname'],
             'lastname'          => $form['lastname'],
+            'birthday'          => $form['birthday'],
             'sex'               => $form['sex'],
             'email'             => $form['email'],
             'phone'             => $form['phone'],
@@ -49,9 +50,6 @@ class CandidateController extends Controller
             'availability'      => $form['availability'],
             'location'          => $form['location'],
         ];
-
-        // Get Photo Data
-
 
         // Get Expirience Data
         foreach($form['exp_start_date'] as $index => $value) {
@@ -135,6 +133,11 @@ class CandidateController extends Controller
             $error++;
         }
 
+        if(empty($user->birthday)) {
+            $user->error['birthday'] = __('Data urodzenia nie może być pusta');
+            $error++;
+        }
+
         if(empty($user->email)) {
             $user->error['email'] = __('Email nie może być pusty');
             $error++;
@@ -168,7 +171,7 @@ class CandidateController extends Controller
                     $exp->error['end_date'] = __('Jeżeli nie jest zazaczone') . ' "' . __('Trwa nadal') . '" ' . __('Data zakończenia nie może być pusta');
                     $error++;
                 } else {
-                    if(!($exp->start_date > $exp->end_date)) {
+                    if(strtotime($exp->start_date) >= strtotime($exp->end_date)) {
                         $exp->error['end_date'] = __('Data zakończenia nie może być większa od daty rozpoczęcia');
                         $error++;
                     }
@@ -193,7 +196,7 @@ class CandidateController extends Controller
                     $edu->error['end_date'] = __('Jeżeli nie jest zazaczone') . ' "' . __('Trwa nadal') . '" ' . __('Data zakończenia nie może być pusta');
                     $error++;
                 } else {
-                    if(!($edu->start_date > $edu->end_date)) {
+                    if(strtotime($edu->start_date) >= strtotime($edu->end_date)) {
                         $edu->error['end_date'] = __('Data zakończenia nie może być większa od daty rozpoczęcia');
                         $error++;
                     }
@@ -229,6 +232,7 @@ class CandidateController extends Controller
         $form_datas['interest'] = $interest;
         $form_datas['skill'] = $skill;
 
+        $form_datas['error'] = 0;
         if($error > 0) {
             $form_datas['error'] = 1;
         }
@@ -238,14 +242,27 @@ class CandidateController extends Controller
 
     public function index(Request $request)
     {
-        // Recruiter don't have access to this page
-        if(Auth::user()->is_recruiter) {
-            return redirect(route('recruterHome'));
-        }
-
         $user_id = Auth::id();
-        $data = [];
+        $disabled = '';
 
+        // If user is recruiter and Id exists show form
+        if(Auth::user()->is_recruiter) {
+
+            if($id = $request->input('id', 0) !== 0) {
+
+                try {
+                    $user = User::findOrFail($id);
+                } catch(ModelNotFoundException $e) {
+                    return redirect(route('recruterHome'));
+                }
+
+                $user_id = $user->id;
+                $disabled = 'disabled';
+            } else {
+                return redirect(route('recruterHome'));
+            }
+
+        }
 
         if($request->input('save')) {
             $form = $request->all();
@@ -279,29 +296,31 @@ class CandidateController extends Controller
 
                 // Interests
                 $this->InterestsController->addUpdateInterest($user_id, $form_datas);
-            } else {
-                $data['user'] = $form_datas['user'];
-                $data['expirience'] = $this->ExpirienceController->renderForm($form_datas['expirience']);
-                $data['education'] = $this->EducationController->renderForm($form_datas['education']);
-                $data['interests'] = $this->InterestsController->renderForm($form_datas['interest']);
-                $data['skill'] = $this->SkillController->renderForm($form_datas['skill']);
 
-                $data['all_personal_datas'] = Position::where('deleted', 0)->get();
-
-                return view('candidate_form', $data);
+                return redirect()->route('addEdit')->with('status', __('Formularz zapisany pomyślnie'));
             }
+
+            $data['user'] = $form_datas['user'];
+            $data['expirience'] = $this->ExpirienceController->renderForm($form_datas['expirience']);
+            $data['education'] = $this->EducationController->renderForm($form_datas['education']);
+            $data['interests'] = $this->InterestsController->renderForm($form_datas['interest']);
+            $data['skill'] = $this->SkillController->renderForm($form_datas['skill']);
+
+            $data['all_personal_datas'] = Position::where('deleted', 0)->get();
+
+            return view('candidate_form', $data);
         }
 
         $data['user'] = $this->get_personal_data($user_id);
-        $data['expirience'] = $this->ExpirienceController->get_expirience($user_id);
-        $data['education'] = $this->EducationController->get_education($user_id);
-        $data['interests'] = $this->InterestsController->get_interests($user_id);
-        $data['skill'] = $this->SkillController->get_skills($user_id);
+        $data['expirience'] = $this->ExpirienceController->get_expirience($user_id, $disabled);
+        $data['education'] = $this->EducationController->get_education($user_id, $disabled);
+        $data['interests'] = $this->InterestsController->get_interests($user_id, $disabled);
+        $data['skill'] = $this->SkillController->get_skills($user_id, $disabled);
 
+        $data['disabled'] = $disabled;
         $data['all_personal_datas'] = Position::where('deleted', 0)->get();
 
         return view('candidate_form', $data);
-
     }
     // Get
 

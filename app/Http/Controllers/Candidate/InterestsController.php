@@ -8,18 +8,18 @@ use App\Models\Interest;
 
 class InterestsController extends Controller
 {
-    public function renderForm($interests = null)
+    public function renderForm($interests = null, string $disabled = '')
     {
         $result = null;
         $i = 0;
 
         foreach($interests as $int) {
-            $result .= view('candidate.interest', ['int' => $int, 'index' => $i]);
+            $result .= view('candidate.interest', ['int' => $int, 'index' => $i, 'disabled' => $disabled]);
             $i++;
         }
 
         if(empty($result)) {
-            $result .= view('candidate.interest', ['index' => $i]);
+            $result .= view('candidate.interest', ['index' => $i, 'disabled' => $disabled]);
         }
 
         return [
@@ -28,10 +28,10 @@ class InterestsController extends Controller
         ];
     }
 
-    public function get_interests(int $user_id)
+    public function get_interests(int $user_id, string $disabled = '')
     {
         $interests = Interest::where('user_id', $user_id)->where('deleted', 0)->cursor();
-        return $this->renderForm($interests);
+        return $this->renderForm($interests, $disabled);
     }
 
     public function addUpdateInterest($user_id, $form_datas)

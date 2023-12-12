@@ -8,20 +8,20 @@ use App\Http\Controllers\Controller;
 
 class SkillController extends Controller
 {
-    public function renderForm($skills = null)
+    public function renderForm($skills = null, $disabled = '')
     {
         $result = null;
         $i = 0;
 
         if($skills) {
             foreach($skills as $skill) {
-                $result .= view('candidate.skill', ['skill' => $skill, 'index' => $i]);
+                $result .= view('candidate.skill', ['skill' => $skill, 'index' => $i, 'disabled' => $disabled]);
                 $i++;
             }
         }
 
         if(empty($result)) {
-            $result .= view('candidate.skill', ['index' => $i]);
+            $result .= view('candidate.skill', ['index' => $i, 'disabled' => $disabled]);
         }
 
         return [
@@ -30,10 +30,10 @@ class SkillController extends Controller
         ];
     }
 
-    public function get_skills(int $user_id)
+    public function get_skills(int $user_id, string $disabled = '')
     {
         $skills = Skill::where('user_id', $user_id)->where('deleted', 0)->cursor();
-        return $this->renderForm($skills);
+        return $this->renderForm($skills, $disabled);
     }
 
     public function addUpdateSkill($user_id, $form_datas)

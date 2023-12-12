@@ -9,20 +9,20 @@ use App\Models\Expirience;
 
 class ExpirienceController extends Controller
 {
-    public function renderForm($expiriences = null)
+    public function renderForm($expiriences = null, string $disabled = '')
     {
         $result = null;
         $i = 0;
 
         if($expiriences) {
             foreach($expiriences as $exp) {
-                $result .= view('candidate.expirience', ['exp' => $exp, 'index' => $i]);
+                $result .= view('candidate.expirience', ['exp' => $exp, 'index' => $i, 'disabled' => $disabled]);
                 $i++;
             }
         }
 
         if(empty($result)) {
-            $result .= view('candidate.expirience', ['index' => $i]);
+            $result .= view('candidate.expirience', ['index' => $i, 'disabled' => $disabled]);
         }
 
         return [
@@ -31,10 +31,10 @@ class ExpirienceController extends Controller
         ];
     }
 
-    public function get_expirience(int $user_id)
+    public function get_expirience(int $user_id, string $disabled = '')
     {
         $expiriences = Expirience::where('user_id', $user_id)->where('deleted', 0)->cursor();
-        return $this->renderForm($expiriences);
+        return $this->renderForm($expiriences, $disabled);
     }
 
     public function addUpdateExpirience($user_id, $form_datas)

@@ -7,8 +7,13 @@
 // Bootstrap
 @import 'bootstrap/scss/bootstrap';
 
+//Bootstrap icons
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+
+// Select2
 @import "/node_modules/select2/dist/css/select2.css";
 
+// Override default values
 @import 'override';
 
 // Custom css

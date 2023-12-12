@@ -2,13 +2,42 @@
 
 namespace App\Http\Controllers\Candidate;
 
-use Illuminate\Http\Request;
 use App\Models\Skill;
 use App\Http\Controllers\Controller;
 
 class SkillController extends Controller
 {
-    public function renderForm($skills = null, $disabled = '')
+    public function get_form_data(int $user_id, array $form): array
+    {
+        $data = [];
+
+        foreach($form['skill_name'] as $index => $value) {
+            $data[] = (object) [
+                'id' => $form['skill_id'][$index],
+                'name' => $form['skill_name'][$index],
+                'user_id' => $user_id
+            ];
+        }
+
+        return $data;
+    }
+
+    public function validate_form_data(array $skill, int $limit, int &$error): void
+    {
+        if(count($skill) > $limit) {
+            $skill['error'] = __('Możesz dodać maksymalnie') . ' ' . $limit . ' ' . __('umiejętności');
+            $error++;
+        }
+
+        foreach($skill as $ski) {
+            if(empty($ski->name)) {
+                $ski->error['name'] = __('Nazwa umiejętności nie może być pusta');
+                $error++;
+            }
+        }
+    }
+
+    public function renderForm($skills = null, string $disabled = ''): array
     {
         $result = null;
         $i = 0;
@@ -36,7 +65,7 @@ class SkillController extends Controller
         return $this->renderForm($skills, $disabled);
     }
 
-    public function addUpdateSkill($user_id, $form_datas)
+    public function addUpdateSkill(int $user_id, array $form_datas): void
     {
         $records = Skill::where('user_id', $user_id)->where('deleted', 0)->get();
         $to_delete = [];

@@ -41,9 +41,9 @@
         <div class="table-responsive">
             <table class="table table-striped border mt-3">
                 <thead>
-                    <th class="col-7">{{ __('Nazwa stanowiska') }}</th>
-                    <th class="col-3">{{ __('Data utworzenia') }}</th>
-                    <th class="col-2">{{ __('Akcje') }}</th>
+                    <th class="col-md-7">{{ __('Nazwa stanowiska') }}</th>
+                    <th class="col-md-3">{{ __('Data utworzenia') }}</th>
+                    <th class="col-md-2">{{ __('Akcje') }}</th>
                 </thead>
                 <tbody>
                     @foreach ($positions as $position)
@@ -72,6 +72,7 @@
 <script type="module">
     $(document).ready(function() {
         $('.form-select').select2({
+            width: '100%',
             placeholder: '{{ __('Wybierz') }}',
             allowClear: true,
         });

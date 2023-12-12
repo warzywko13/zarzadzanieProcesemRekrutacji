@@ -8,6 +8,59 @@ use App\Models\Education;
 
 class EducationController extends Controller
 {
+    public function get_form_data(int $user_id, array $form): array
+    {
+        $data = [];
+
+        foreach($form['edu_start_date'] as $index => $value) {
+            $data[] = (object)[
+                'id'                => $form['edu_id'][$index],
+                'user_id'           => $user_id,
+                'start_date'        => $form['edu_start_date'][$index],
+                'end_date'          => $form['edu_end_date'][$index],
+                'name'              => $form['edu_education_name'][$index],
+                'major'             => $form['edu_major'][$index],
+                'title'             => $form['edu_title'][$index],
+                'in_progress'       => $form['exp_in_progress'][$index] ?: 0,
+            ];
+        }
+
+        return $data;
+    }
+
+    public function validate_form_data(array $education, int $limit, int &$error): void
+    {
+        if(count($education) > $limit) {
+            $education['error'] = __('Możesz dodać maksymalnie') . ' ' . $limit . ' ' .__('wykształceń');
+            $error++;
+        }
+
+        foreach($education as $edu) {
+            if(empty($edu->start_date)) {
+                $edu->error['start_date'] = __('Data rozpoczęcia nie może być pusta');
+                $error++;
+            }
+
+            if($edu->in_progress == 0) {
+                if(empty($edu->end_date)) {
+                    $edu->error['end_date'] = __('Jeżeli nie jest zazaczone') . ' "' . __('Trwa nadal') . '" ' . __('Data zakończenia nie może być pusta');
+                    $error++;
+                } else {
+                    if(strtotime($edu->start_date) >= strtotime($edu->end_date)) {
+                        $edu->error['end_date'] = __('Data zakończenia nie może być większa od daty rozpoczęcia');
+                        $error++;
+                    }
+                }
+            }
+
+            if(empty($edu->name)) {
+                $edu->error['name'] = __('Nazwa uczelni nie może być pusta');
+                $error++;
+            }
+
+        }
+    }
+
     public function renderForm($educations = null, string $disabled = '')
     {
         $result = null;

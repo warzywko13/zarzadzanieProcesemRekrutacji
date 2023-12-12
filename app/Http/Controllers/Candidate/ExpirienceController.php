@@ -9,6 +9,58 @@ use App\Models\Expirience;
 
 class ExpirienceController extends Controller
 {
+    public function get_form_data(int $user_id, array $form): array
+    {
+        $data = [];
+
+        foreach($form['exp_start_date'] as $index => $value) {
+            $data[] = (object) [
+                'id'                => $form['exp_id'][$index],
+                'user_id'           => $user_id,
+                'start_date'        => $form['exp_start_date'][$index],
+                'end_date'          => $form['exp_end_date'][$index] == '1970-01-01' ? null : $form['exp_end_date'][$index],
+                'name'              => $form['exp_company_name'][$index],
+                'position'          => $form['exp_position'][$index],
+                'in_progress'       => $form['exp_in_progress'][$index] ?: 0,
+                'responsibilities'  => $form['exp_responsibilities'][$index],
+            ];
+        }
+
+        return $data;
+    }
+
+    public function validate_form_data(array $expirience, int $limit, int &$error): void
+    {
+        if(count($expirience) > $limit) {
+            $expirience['error'] = __('Możesz dodać maksymalnie') . ' ' . $limit . ' ' .__('doświadczeń zawodowych');
+            $error++;
+        }
+
+        foreach($expirience as $exp) {
+            if(empty($exp->start_date)) {
+                $exp->error['start_date'] = __('Data rozpoczęcia nie może być pusta');
+                $error++;
+            }
+
+            if($exp->in_progress == 0) {
+                if(empty($exp->end_date)) {
+                    $exp->error['end_date'] = __('Jeżeli nie jest zazaczone') . ' "' . __('Trwa nadal') . '" ' . __('Data zakończenia nie może być pusta');
+                    $error++;
+                } else {
+                    if(strtotime($exp->start_date) >= strtotime($exp->end_date)) {
+                        $exp->error['end_date'] = __('Data zakończenia nie może być większa od daty rozpoczęcia');
+                        $error++;
+                    }
+                }
+            }
+
+            if(empty($exp->name)) {
+                $exp->error['name'] = __('Nazwa firmy nie może być pusta');
+                $error++;
+            }
+        }
+    }
+
     public function renderForm($expiriences = null, string $disabled = '')
     {
         $result = null;

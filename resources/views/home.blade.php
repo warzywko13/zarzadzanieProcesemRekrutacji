@@ -78,15 +78,16 @@
                 <div class="form-group mt-2">
                     <label for="availability" class="col-form-label">{{ __('Dostępność') }}</label>
                     <select class="form-select" multiple name="availability[]" aria-label="{{ __('Dostępność')}}">
-                        <option @if(isset($selected['availability']) && in_array(1, $selected['availability'])) selected @endif value="1">{{ __('Miesiąc') }}</option>
-                        <option @if(isset($selected['availability']) && in_array(2, $selected['availability'])) selected @endif value="2">{{ __('2 Miesiące') }}</option>
-                        <option @if(isset($selected['availability']) && in_array(3, $selected['availability'])) selected @endif value="3">{{ __('3 Miesiące') }}</option>
+                        <option @if(isset($selected['availability']) && in_array(1, $selected['availability'])) selected @endif value="1">{{ __('Od zaraz') }}</option>
+                        <option @if(isset($selected['availability']) && in_array(2, $selected['availability'])) selected @endif value="2">{{ __('Miesiąc') }}</option>
+                        <option @if(isset($selected['availability']) && in_array(3, $selected['availability'])) selected @endif value="3">{{ __('2 Miesiące') }}</option>
+                        <option @if(isset($selected['availability']) && in_array(4, $selected['availability'])) selected @endif value="4">{{ __('3 Miesiące') }}</option>
                     </select>
                 </div>
 
             </div>
 
-            <div>
+            <div class="mt-3">
                 <button type="submit" class="btn btn-primary">{{ __('Filtruj') }}</button>
                 <a href="{{ route('recruterHome') }}" class="btn btn-outline-primary">{{  __('Resetuj') }}</a>
             </div>
@@ -139,6 +140,8 @@
 <script type="module">
     $(document).ready(function() {
         $('.form-select').select2({
+            width: '100%',
+            height: '100%',
             placeholder: '{{ __('Wybierz') }}',
             allowClear: true,
         });

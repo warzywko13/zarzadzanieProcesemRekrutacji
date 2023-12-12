@@ -23,7 +23,7 @@
 
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <!-- Left Side Of Navbar -->
-                        @if(isset(Auth::user()->is_recruiter))
+                        @if(isset(Auth::user()->is_recruiter) && Auth::user()->is_recruiter == 1)
                             <ul class="navbar-nav me-auto">
                                 <li class="nav-item">
                                     <a href="{{ route('recruterHome') }}" class="nav-link">

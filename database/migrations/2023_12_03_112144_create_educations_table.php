@@ -18,6 +18,7 @@ return new class extends Migration
             $table->timestamp('end_date')->nullable();
             $table->integer('in_progress')->default(0);
             $table->string('name')->nullable();
+            $table->string('major')->nullable();
             $table->string('title')->nullable();
             $table->integer('deleted')->default(0);
             $table->timestamp('deleted_at')->nullable();

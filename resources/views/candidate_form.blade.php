@@ -21,17 +21,19 @@
 
                         {{-- Docelowe stanowisko --}}
                         <div class="input-group">
-                            <label for="position_id" class="col-sm-2 col-form-label">{{ __('Docelowe stanowisko') }}</label>
-                            <div class="col-sm-10">
+                            <label for="position_id" class="col-12 col-md-2 col-form-label">{{ __('Docelowe stanowisko') }}</label>
+                            <div class="col-12 col-md-10">
                                 <div class="input-group mb-3">
                                     <div class="input-group">
-                                        <select class="form-select" id="position_id" {{ $disabled }} name="position_id" aria-label="{{ __('Docelowe stanowisko') }}" @if($user->position_manual == 1) disabled @endif>
-                                            <option @empty($user->position_id) selected @endempty value="">{{ __('Wybierz') }}</option>
-                                            @foreach ($all_personal_datas as $users)
-                                                <option @if($users->id == $user->position_id) selected @endif value="{{ $users->id }}" >{{ $users->name }}</option>
-                                            @endforeach
-                                        </select>
-                                        <div class="input-group-text">
+                                        <div class="col-10 col-xl-11">
+                                            <select class="form-select" id="position_id" {{ $disabled }} name="position_id" aria-label="{{ __('Docelowe stanowisko') }}" @if($user->position_manual == 1) disabled @endif>
+                                                <option @empty($user->position_id) selected @endempty value="">{{ __('Wybierz') }}</option>
+                                                @foreach ($all_personal_datas as $users)
+                                                    <option @if($users->id == $user->position_id) selected @endif value="{{ $users->id }}" >{{ $users->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="input-group-text col-2 col-xl-1">
                                           <input
                                               class="form-check-input mt-0 me-2"
                                               {{ $disabled }}
@@ -55,8 +57,8 @@
 
                         {{-- Docelowe stanowisko inne --}}
                         <div class="mb-3 row {{ $user->position_manual == 0 ? 'd-none' : ''  }}" id="position_name_label">
-                            <label for="position_name" class="col-sm-2 col-form-label">{{ __('Podaj stanowisko') }}</label>
-                            <div class="col-sm-10">
+                            <label for="position_name" class="col-12 col-md-2 col-form-label">{{ __('Podaj stanowisko') }}</label>
+                            <div class="col-12 col-md-10">
                                 <input type="text" {{ $disabled }} class="form-control" id="position_name" name="position_name" value="{{ isset($user->position_name) ? $user->position_name : '' }}">
                                 @isset($user->error['position_name'])
                                     <p class="text-danger fw-bold">
@@ -68,21 +70,21 @@
 
                         {{-- Lokalizacja --}}
                         <div class="mb-3 row">
-                            <label for="location" class="col-sm-2 col-form-label">{{ __('Lokalizacja') }}</label>
-                            <div class="col-sm-10">
+                            <label for="location" class="col-12 col-md-2 col-form-label">{{ __('Lokalizacja') }}</label>
+                            <div class="col-12 col-md-10">
                                 <input type="text" {{ $disabled }} class="form-control" id="location" name="location" value="{{ isset($user->location) ? $user->location : '' }}">
                             </div>
                         </div>
 
                         {{-- Od kiedy mogę zacząć --}}
                         <div class="mb-3 row">
-                            <label for="availability" class="col-sm-2 col-form-label">{{ __('Dostępność') }}</label>
-                            <div class="col-sm-10">
+                            <label for="availability" class="col-12 col-md-2 col-form-label">{{ __('Dostępność') }}</label>
+                            <div class="col-12 col-md-10">
                                 <select class="form-select" {{ $disabled }} name="availability" aria-label="{{ __('Dostępność')}}">
-                                    <option @empty($user->availability) selected @endempty value="">{{ __('Dowolna') }}</option>
-                                    <option @if($user->availability == 1) @endif value="1">{{ __('Miesiąc') }}</option>
-                                    <option @if($user->availability == 2) selected @endif value="2">{{ __('2 Miesiące') }}</option>
-                                    <option @if($user->availability == 3) selected @endif value="3">{{ __('3 Miesiące') }}</option>
+                                    <option @if($user->availability == 1) @endif value="1">{{ __('Od zaraz') }}</option>
+                                    <option @if($user->availability == 2) selected @endif value="2">{{ __('Miesiąc') }}</option>
+                                    <option @if($user->availability == 3) selected @endif value="3">{{ __('2 Miesiące') }}</option>
+                                    <option @if($user->availability == 4) selected @endif value="4">{{ __('3 Miesiące') }}</option>
                                 </select>
                             </div>
                         </div>
@@ -103,8 +105,8 @@
 
                     {{-- Imię --}}
                     <div class="mb-3 row">
-                        <label for="firstname" class="col-sm-2 col-form-label">{{ __('Imię') }}</label>
-                        <div class="col-sm-10">
+                        <label for="firstname" class="col-12 col-md-2 col-form-label">{{ __('Imię') }}</label>
+                        <div class="col-12 col-md-10">
                             <input type="text" {{ $disabled }} class="form-control" id="firstname" name="firstname" value="{{ $user->firstname }}">
                             @isset($user->error['firstname'])
                                 <p class="text-danger fw-bold">
@@ -116,8 +118,8 @@
 
                     {{-- Nazwisko --}}
                     <div class="mb-3 row">
-                        <label for="lastname" class="col-sm-2 col-form-label">{{ __('Nazwisko') }}</label>
-                        <div class="col-sm-10">
+                        <label for="lastname" class="col-12 col-md-2 col-form-label">{{ __('Nazwisko') }}</label>
+                        <div class="col-12 col-md-10">
                             <input type="text" {{ $disabled }} class="form-control" id="lastname" name="lastname" value="{{ $user->lastname }}">
                             @isset($user->error['lastname'])
                                 <p class="text-danger fw-bold">
@@ -129,8 +131,8 @@
 
                     {{-- Data urodzenia --}}
                     <div class="mb-3 row">
-                        <label for="birthday" class="col-sm-2 col-form-label">{{ __('Wiek') }}</label>
-                        <div class="col-sm-10">
+                        <label for="birthday" class="col-12 col-md-2 col-form-label">{{ __('Wiek') }}</label>
+                        <div class="col-12 col-md-10">
                             <input type="date" {{ $disabled }} class="form-control" id="birthday" name="birthday" value="{{ $user->birthday }}">
                             @isset($user->error['birthday'])
                                 <p class="text-danger fw-bold">
@@ -142,8 +144,8 @@
 
                     {{-- Płeć --}}
                     <div class="mb-3 row">
-                        <label for="sex" class="col-sm-2 col-form-label">{{ __('Płeć') }}</label>
-                        <div class="col-sm-10">
+                        <label for="sex" class="col-12 col-md-2 col-form-label">{{ __('Płeć') }}</label>
+                        <div class="col-12 col-md-10">
                             <select class="form-select" {{ $disabled }} name="sex" aria-label="{{ __('Płeć')}}">
                                 <option @empty($user->sex) selected @endempty value="">{{ __('Wybierz') }}</option>
                                 <option @if($user->sex == 1) @endif value="1">{{ __('Kobieta') }}</option>
@@ -159,8 +161,8 @@
 
                     {{-- Adres e-mail --}}
                     <div class="mb-3 row">
-                        <label for="email" class="col-sm-2 col-form-label">{{ __('Email') }}</label>
-                        <div class="col-sm-10">
+                        <label for="email" class="col-12 col-md-2 col-form-label">{{ __('Email') }}</label>
+                        <div class="col-12 col-md-10">
                             <input type="text" {{ $disabled }} readonly class="form-control-plaintext" id="email" name="email" value="{{ $user->email }}">
                             @isset($user->error['email'])
                                 <p class="text-danger fw-bold">
@@ -172,12 +174,12 @@
 
                     {{-- Numer telefonu --}}
                     <div class="mb-3 row">
-                        <label for="phone" class="col-sm-2 col-form-label">{{ __('Numer telefonu') }}</label>
-                        <div class="col-sm-10">
+                        <label for="phone" class="col-12 col-md-2 col-form-label">{{ __('Numer telefonu') }}</label>
+                        <div class="col-12 col-md-10">
                             <input type="text" {{ $disabled }} class="form-control" id="phone" name="phone" value="{{ $user->phone }}">
-                            @isset($error['phone'])
+                            @isset($user->error['phone'])
                                 <p class="text-danger fw-bold">
-                                    {{ $error['phone'] }}!
+                                    {{ $user->error['phone'] }}!
                                 </p>
                             @endisset
                         </div>
@@ -185,12 +187,12 @@
 
                     {{-- Ulica --}}
                     <div class="mb-3 row">
-                        <label for="street" class="col-sm-2 col-form-label">{{ __('Ulica') }}</label>
-                        <div class="col-sm-10">
+                        <label for="street" class="col-12 col-md-2 col-form-label">{{ __('Ulica') }}</label>
+                        <div class="col-12 col-md-10">
                             <input type="text" {{ $disabled }} class="form-control" id="street" name="street" value="{{ $user->street }}">
-                            @isset($error['street'])
+                            @isset($user->error['street'])
                                 <p class="text-danger fw-bold">
-                                    {{ $error['street'] }}!
+                                    {{ $user->error['street'] }}!
                                 </p>
                             @endisset
                         </div>
@@ -198,12 +200,12 @@
 
                     {{-- Numer domu --}}
                     <div class="mb-3 row">
-                        <label for="street_number" class="col-sm-2 col-form-label">{{ __('Numer domu') }}</label>
-                        <div class="col-sm-10">
-                            <input type="text" {{ $disabled }} class="form-control" id="street_number" name="street_number" value="{{ $user->street_number }}">
-                            @isset($error['street_number'])
+                        <label for="street_number" class="col-12 col-md-2 col-form-label">{{ __('Numer domu') }}</label>
+                        <div class="col-12 col-md-10">
+                            <input type="number" {{ $disabled }} class="form-control" id="street_number" name="street_number" value="{{ $user->street_number }}">
+                            @isset($user->error['street_number'])
                                 <p class="text-danger fw-bold">
-                                    {{ $error['street_number'] }}!
+                                    {{ $user->error['street_number'] }}!
                                 </p>
                             @endisset
                         </div>
@@ -211,12 +213,12 @@
 
                     {{-- Numer lokalu --}}
                     <div class="mb-3 row">
-                        <label for="flat_number" class="col-sm-2 col-form-label">{{ __('Numer lokalu') }}</label>
-                        <div class="col-sm-10">
-                            <input type="text" {{ $disabled }} class="form-control" id="flat_number" name="flat_number" value="{{ $user->flat_number }}">
-                            @isset($error['flat_number'])
+                        <label for="flat_number" class="col-12 col-md-2 col-form-label">{{ __('Numer lokalu') }}</label>
+                        <div class="col-12 col-md-10">
+                            <input type="number" {{ $disabled }} class="form-control" id="flat_number" name="flat_number" value="{{ $user->flat_number }}">
+                            @isset($user->error['flat_number'])
                                 <p class="text-danger fw-bold">
-                                    {{ $error['flat_number'] }}!
+                                    {{ $user->error['flat_number'] }}!
                                 </p>
                             @endisset
                         </div>
@@ -224,21 +226,21 @@
 
                     {{-- Zdjęcie --}}
                     <div class="mb-3 row">
-                        <label for="image" class="col-sm-2 col-form-label">{{ __('Zdjęcie') }}</label>
-                        <div class="col-sm-10">
+                        <label for="image" class="col-12 col-md-2 col-form-label">{{ __('Zdjęcie') }}</label>
+                        <div class="col-12 col-md-10">
                             @isset($user->image)
-                                <img class="mb-3" style="width: 15rem; height: 15rem;" src="data:image/jpeg;base64,{{ $user->image }}" />
+                                <img class="mb-3 img-fluid rounded" style="width: 15rem; height: 15rem;" src="data:image/jpeg;base64,{{ $user->image }}" />
                             @endisset
 
                             @if(!$disabled)
                                 <input type="file" name="image" class="form-control custom-file-input">
+                                @isset($user->error['image'])
+                                    <p class="text-danger fw-bold">
+                                        {{ $user->error['image'] }}!
+                                    </p>
+                                @endisset
                             @endif
                         </div>
-                        @isset($error['image'])
-                            <p class="text-danger fw-bold">
-                                {{ $error['image'] }}!
-                            </p>
-                        @endisset
                     </div>
                 </div>
               </div>
@@ -252,11 +254,8 @@
                 </button>
               </h2>
               <div id="expirience" class="accordion-collapse collapse show">
-                <div class="accordion-body">
-                    <input id="expirience" value="{{ $expirience['count'] }}" type="hidden" >
-
+                    <input id="expirience_last" value="{{ $expirience['count'] }}" type="hidden" >
                     {!! $expirience['result'] !!}
-                </div>
               </div>
             </div>
 
@@ -268,11 +267,8 @@
                 </button>
               </h2>
               <div id="education" class="accordion-collapse collapse show">
-                <div class="accordion-body">
-                    <input id="education_last" value="{{ $education['count'] }}" type="hidden" >
-
-                    {!! $education['result'] !!}
-                </div>
+                <input id="education_last" value="{{ $education['count'] }}" type="hidden" >
+                {!! $education['result'] !!}
             </div>
 
             {{-- Umiejętności --}}
@@ -283,11 +279,8 @@
                     </button>
                 </h2>
                 <div id="skill" class="accordion-collapse collapse show">
-                    <div class="accordion-body">
-                        <input id="skill_last" value={{ $skill['count'] }} type="hidden" >
-
-                        {!! $skill['result'] !!}
-                    </div>
+                    <input id="skill_last" value={{ $skill['count'] }} type="hidden" >
+                    {!! $skill['result'] !!}
                 </div>
             </div>
 
@@ -299,11 +292,8 @@
                     </button>
                 </h2>
                 <div id="interests" class="accordion-collapse collapse show">
-                    <div class="accordion-body">
-                        <input id="interests_last" value={{ $interests['count'] }} type="hidden" >
-
-                        {!! $interests['result'] !!}
-                    </div>
+                    <input id="interests_last" value={{ $interests['count'] }} type="hidden" >
+                    {!! $interests['result'] !!}
                 </div>
             </div>
 
@@ -320,7 +310,12 @@
 @section('script')
 <script type="module">
     $(document).ready(function() {
-        $('.form-select').select2(/*{minimumResultsForSearch: -1}*/);
+        $('.form-select').select2({
+            width: '100%',
+            height: '100%',
+            placeholder: '{{ __('Wybierz') }}',
+            allowClear: true,
+        });
     });
 </script>
 @if(!$disabled)
@@ -332,7 +327,14 @@
             $('#expirience_last').val(+last + 1);
             const index = $('#expirience_last').val();
 
-            // Dodać zabezpieczenie max 5
+            // Validation
+            const limit = 5;
+            const expirience_length = $('#expirience .accordion-body').length;
+
+            if(expirience_length >= limit) {
+                alert(`{{ __('Możesz dodać maksymalnie') }} ${limit} {{ __('doświadczeń zawodowych') }}`);
+                return false;
+            }
 
             expirience.append(`
                 <div class="accordion-body border" index="${index}">
@@ -400,7 +402,14 @@
             $('#education_last').val(+last + 1);
             const index = $('#education_last').val()
 
-            // Dodać zabezpieczenie max 5
+            // Validation
+            const limit = 5;
+            const education_length = $('#education .accordion-body').length;
+
+            if(education_length >= limit) {
+                alert(`{{ __('Możesz dodać maksymalnie') }} ${limit} {{ __('wykształceń') }}`);
+                return false;
+            }
 
             educations.append(`
                 <div class="accordion-body border" index="${index}">
@@ -471,7 +480,14 @@
             $('#skill_last').val(+last + 1);
             const index = $('#skill_last').val();
 
-            // @TODO Dodać zabezpiecznie max 10
+            // Validation
+            const limit = 10;
+            const skill_length = $('#skill .accordion-body').length;
+
+            if(skill_length >= limit) {
+                alert(`{{ __('Możesz dodać maksymalnie') }} ${limit} {{ __('umiejętności') }}`);
+                return false;
+            }
 
             skill.append(`
                 <div class="accordion-body border" index="${index}">
@@ -499,7 +515,14 @@
             $('#interests_last').val(+last + 1);
             const index = $('#interests_last').val();
 
-            // @TODO Dodać zabezpieczenie max 10
+            // Validation
+            const limit = 10;
+            const interests_length = $('#interests .accordion-body').length;
+
+            if(interests_length >= limit) {
+                alert(`{{ __('Możesz dodać maksymalnie') }} ${limit} {{ __('zainteresowań') }}`);
+                return false;
+            }
 
             interests.append(`
                 <div class="accordion-body border" index="${index}">

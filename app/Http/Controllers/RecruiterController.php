@@ -206,14 +206,18 @@ class RecruiterController extends Controller
 
             switch ($result->availability) {
                 case 1:
-                    $result->availability = __('Miesiąc');
+                    $result->availability = __('Od zaraz');
                     break;
 
                 case 2:
-                    $result->availability = __('2 Miesiące');
+                    $result->availability = __('Miesiąc');
                     break;
 
                 case 3:
+                    $result->availability = __('2 Miesiące');
+                    break;
+
+                case 4:
                     $result->availability = __('3 Miesiące');
                     break;
 

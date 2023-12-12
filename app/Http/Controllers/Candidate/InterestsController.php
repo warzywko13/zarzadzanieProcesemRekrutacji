@@ -8,6 +8,36 @@ use App\Models\Interest;
 
 class InterestsController extends Controller
 {
+    public function get_form_data(int $user_id, array $form): array
+    {
+        $data = [];
+
+        foreach($form['int_name'] as $index => $value) {
+            $data[] = (object) [
+                'id' => $form['int_id'][$index],
+                'name' => $form['int_name'][$index],
+                'user_id' => $user_id
+            ];
+        }
+
+        return $data;
+    }
+
+    public function validate_form_data(array $interest, int $limit, int &$error): void
+    {
+        if(count($interest) > $limit) {
+            $interest['error'] = __('Możesz dodać maksymalnie') . ' ' . $limit . ' ' . __('zainteresowań');
+            $error++;
+        }
+
+        foreach($interest as $int) {
+            if(empty($int->name)) {
+                $int->error['name'] = __('Nazwa zaintersowania nie może być pusta');
+                $error++;
+            }
+        }
+    }
+
     public function renderForm($interests = null, string $disabled = '')
     {
         $result = null;

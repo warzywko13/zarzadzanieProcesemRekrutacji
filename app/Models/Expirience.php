@@ -17,6 +17,8 @@ class Expirience extends Model
     protected $fillable = [
         'user_id',
         'start_date',
+        'end_date',
+        'in_progress',
         'name',
         'position',
         'responsibilities'

@@ -5,6 +5,8 @@
     <form method="POST" action="{{route('addEditPosition')}}">
         @csrf
 
+        <h1 class="text-center h1">| {{ isset($position->id) ? __('Formularz edycji pozycji') : __('Formularz dodawania pozycji') }} |</h1>
+
         <div class="accordion mt-5" id="accordionPanels">
             {{-- Szukam --}}
             <div class="accordion-item">

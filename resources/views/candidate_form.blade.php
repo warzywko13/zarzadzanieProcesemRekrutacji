@@ -8,11 +8,11 @@
     <form method="POST" action="{{route('addEdit')}}" enctype="multipart/form-data">
         @csrf
         <div class="accordion mt-5" id="accordionPanels">
-            {{-- Szukam --}}
+            {{-- Poszukuję --}}
             <div class="accordion-item">
                 <h2 class="accordion-header">
                     <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#looking_for" aria-expanded="true" aria-controls="looking_for">
-                        {{ __('Szukam') }}
+                        {{ __('Poszukuję') }}
                     </button>
                 </h2>
                 <div id="looking_for" class="accordion-collapse collapse show">
@@ -227,7 +227,7 @@
                         <label for="image" class="col-12 col-md-2 col-form-label">{{ __('Zdjęcie') }}</label>
                         <div class="col-12 col-md-10">
                             @isset($user->image)
-                                <img class="mb-3 img-fluid rounded" style="width: 15rem; height: 15rem;" src="data:image/jpeg;base64,{{ $user->image }}" />
+                                <img class="mb-3 img-fluid rounded" alt="{{ __('Zdjęcie profilowe') }}" style="width: 15rem; height: 15rem;" src="data:image/jpeg;base64,{{ $user->image }}" />
                             @endisset
 
                             @if(!$disabled)
@@ -259,21 +259,22 @@
 
             {{-- Wykształcenie --}}
             <div class="accordion-item">
-              <h2 class="accordion-header">
-                <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#education" aria-expanded="true" aria-controls="education">
-                    {{ __('Wykształcenie') }}
-                </button>
-              </h2>
-              <div id="education" class="accordion-collapse collapse show">
-                <input id="education_last" value="{{ $education['count'] }}" type="hidden" >
-                {!! $education['result'] !!}
+                <h2 class="accordion-header">
+                    <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#education" aria-expanded="true" aria-controls="education">
+                        {{ __('Wykształcenie') }}
+                    </button>
+                </h2>
+                <div id="education" class="accordion-collapse collapse show">
+                    <input id="education_last" value="{{ $education['count'] }}" type="hidden" >
+                    {!! $education['result'] !!}
+                </div>
             </div>
 
-            {{-- Umiejętności --}}
+            {{-- Umiejętności i Kwalifikacje --}}
             <div class="accordion-item">
                 <h2 class="accordion-header">
                     <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#skill" aria-expanded="true" aria-controls="skill">
-                        {{ __('Umiejętności') }}
+                        {{ __('Umiejętności i Kwalifikacje') }}
                     </button>
                 </h2>
                 <div id="skill" class="accordion-collapse collapse show">

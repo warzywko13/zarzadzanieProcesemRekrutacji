@@ -5,7 +5,7 @@
     <div class="row justify-content-center mt-5">
         <div class="col-md-4">
             <div class="bg-primary rounded" id="register-panel">
-                <h1 class="h1 text-center py-4">{{ __('Rejestracja') }}</h1>
+                <h1 class="h1 fw-bold text-center py-4">{{ __('Rejestracja') }}</h1>
 
                 <form method="POST" action="{{ route('register') }}">
                     @csrf

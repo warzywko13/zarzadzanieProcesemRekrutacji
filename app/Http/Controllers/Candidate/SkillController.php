@@ -87,7 +87,7 @@ class SkillController extends Controller
         }
 
         if($to_delete) {
-            Skill::whereIn('id', $to_delete)->update([
+            Skill::where('id', $to_delete)->where('deleted', 0)->update([
                 'deleted' => '1',
                 'deleted_at' => date('Y-m-d H:i:s'),
                 'deleted_by' => $user_id
@@ -97,7 +97,7 @@ class SkillController extends Controller
         // Add Update Skill
         foreach($form_datas['skill'] as $skill) {
             if($skill->id) {
-                $record = Skill::where('id', $skill->id);
+                $record = Skill::where('id', $skill->id)->where('deleted', 0);
                 if($record) {
                     $skill->updated_by = $user_id;
                     $record->update((array) $skill);

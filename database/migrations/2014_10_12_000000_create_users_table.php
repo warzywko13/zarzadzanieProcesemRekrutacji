@@ -34,6 +34,7 @@ return new class extends Migration
             $table->unsignedBigInteger('photo_id')->nullable();
             $table->integer('is_recruiter')->default(0);
             $table->integer('deleted')->default(0);
+            $table->integer('updated_by')->nullable();
             $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
         });

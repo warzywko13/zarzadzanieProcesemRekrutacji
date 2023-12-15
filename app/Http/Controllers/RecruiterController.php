@@ -193,7 +193,7 @@ class RecruiterController extends Controller
                 , u.availability
             FROM users u
             LEFT JOIN positions p ON u.position_id = p.id AND p.deleted = 0
-            WHERE u.deleted = 0
+            WHERE u.deleted = 0 AND IFNULL(firstname, '') <> '' AND IFNULL(lastname, '') <> ''
             $where
             ";
 

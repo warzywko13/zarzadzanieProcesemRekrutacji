@@ -111,7 +111,7 @@ class ExpirienceController extends Controller
         }
 
         if($to_delete) {
-            Expirience::whereIn('id', $to_delete)->update([
+            Expirience::where('id', $to_delete)->where('deleted', 0)->update([
                 'deleted' => '1',
                 'deleted_at' => date('Y-m-d H:i:s'),
                 'deleted_by' => $user_id
@@ -121,7 +121,7 @@ class ExpirienceController extends Controller
         // Add Update Expirience
         foreach($form_datas['expirience'] as $exp) {
             if($exp->id) {
-                $record = Expirience::where('id', $exp->id);
+                $record = Expirience::where('id', $exp->id)->where('deleted', 0);
                 if($record) {
                     $exp->updated_by = $user_id;
                     $record->update((array) $exp);

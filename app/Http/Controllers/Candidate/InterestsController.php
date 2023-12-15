@@ -86,7 +86,7 @@ class InterestsController extends Controller
         }
 
         if($to_delete) {
-            Interest::whereIn('id', $to_delete)->update([
+            Interest::where('id', $to_delete)->where('deleted', 0)->update([
                 'deleted' => '1',
                 'deleted_at' => date('Y-m-d H:i:s'),
                 'deleted_by' => $user_id
@@ -96,7 +96,7 @@ class InterestsController extends Controller
         // Add Update Interest
         foreach($form_datas['interest'] as $int) {
             if($int->id) {
-                $record = Interest::where('id', $int->id);
+                $record = Interest::where('id', $int->id)->where('deleted', 0);
                 if($record) {
                     $int->updated_by = $user_id;
                     $record->update((array) $int);

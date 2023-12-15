@@ -27,6 +27,7 @@
                                     <div class="input-group">
                                         <div class="col-10 col-xl-11">
                                             <select class="form-select" id="position_id" {{ $disabled }} name="position_id" aria-label="{{ __('Docelowe stanowisko') }}" @if($user->position_manual == 1) disabled @endif>
+                                                <option value="">{{ __('Wybierz') }}</option>
                                                 @foreach ($filter['positions'] as $position)
                                                     <option @if($position->id == $user->position_id) selected @endif value="{{ $position->id }}" >{{ $position->name }}</option>
                                                 @endforeach
@@ -319,7 +320,7 @@
 </script>
 @if(!$disabled)
     <script>
-        function addNewPosition() {
+        function addNewExpirience() {
             const expirience = $('#expirience');
 
             const last = $('#expirience_last').val();
@@ -337,61 +338,67 @@
 
             expirience.append(`
                 <div class="accordion-body border" index="${index}">
-                    <input type="hidden" name="exp_id[]">
-                    <input type="hidden" id="exp_in_progress_${index}" name="exp_in_progress[]" value="">
+                    <input type="hidden" name="exp_id[]" value="" >
+                    <input type="hidden" id="exp_in_progress${index}" name="exp_in_progress[]" value="">
 
                     <div class="row">
+                        {{-- Start Date --}}
                         <div class="mb-3 row">
-                            <label for="exp_start_date_${index}" class="col-sm-2 col-form-label">{{ __('Data rozpoczęcia') }}</label>
-                            <div class="col-sm-10">
-                            <input type="date" class="form-control" id="exp_start_date_${index}" name="exp_start_date[]" value="">
+                            <label for="exp_start_date${index}" class="col-12 col-md-2 col-form-label">{{ __('Data rozpoczęcia') }}</label>
+                            <div class="col-12 col-md-10">
+                                <input type="date" class="form-control" id="exp_start_date${index}" name="exp_start_date[]" value="">
                             </div>
                         </div>
 
+                        {{-- End Date --}}
                         <div class="mb-3 row">
-                            <label for="exp_end_date_${index}" class="col-sm-2 col-form-label">{{ __('Data zakończenia') }}</label>
-                            <div class="col-sm-10">
-                            <div class="input-group mb-3">
-                                <div class="input-group">
-                                <input type="date" class="form-control" id="exp_end_date_${index}" name="exp_end_date[]" value="">
-                                <div class="input-group-text">
-                                    <input
-                                        class="form-check-input mt-0 me-2"
-                                        onclick="expChecked('exp', ${index})"
-                                        type="checkbox"
-                                        name="exp_in_progress[]"
-                                        aria-label="{{ __('Trwa nadal') }}"
-                                    >
-                                    {{ __('Trwa nadal') }}
+                            <label for="end_date${index}" class="col-12 col-md-2 col-form-label">{{ __('Data zakończenia') }}</label>
+                            <div class="col-12 col-md-10">
+                                <div class="input-group mb-3">
+                                    <div class="input-group">
+                                        <input type="date" class="form-control" id="exp_end_date${index}" name="exp_end_date[]" value="">
+                                        <div class="input-group-text">
+                                            <input
+                                                class="form-check-input mt-0 me-2"
+                                                onclick="onCheckBoxChange('exp', ${index})"
+                                                type="checkbox"
+                                                id="exp_checkbox${index}"
+                                                aria-label="{{ __('Trwa nadal') }}"
+                                            >
+                                            {{ __('Trwa nadal') }}
+                                        </div>
+                                    </div>
                                 </div>
-                                </div>
-                            </div>
                             </div>
                         </div>
 
+                        {{-- Name --}}
                         <div class="mb-3 row">
-                            <label for="exp_company_name_${index}" class="col-sm-2 col-form-label">{{ __('Nazwa firmy') }}</label>
-                            <div class="col-sm-10">
-                            <input type="text" class="form-control" id="exp_company_name_${index}" name="exp_company_name[]" value="">
+                            <label for="exp_company_name${index}" class="col-12 col-md-2 col-form-label">{{ __('Nazwa firmy') }}</label>
+                            <div class="col-12 col-md-10">
+                                <input type="text" class="form-control" id="exp_company_name${index}" name="exp_company_name[]" value="">
                             </div>
                         </div>
 
+                        {{-- Position --}}
                         <div class="mb-3 row">
-                            <label for="exp_position_${index}" class="col-sm-2 col-form-label">{{ __('Stanowisko') }}</label>
-                            <div class="col-sm-10">
-                            <input type="text" class="form-control" id="exp_position_${index}" name="exp_position[]" value="">
+                            <label for="exp_position${index}" class="col-12 col-md-2 col-form-label">{{ __('Stanowisko') }}</label>
+                            <div class="col-12 col-md-10">
+                            <input type="text" class="form-control" id="exp_position${index}" name="exp_position[]" value="">
                             </div>
                         </div>
 
+                        {{-- Responsibilities --}}
                         <div class="mb-3 row">
-                        <label for="exp_responsibilities_${index}" class="col-sm-2 col-form-label">{{ __('Zakres obowiązków') }}</label>
-                        <textarea class="form-control" name="exp_responsibilities[]" id="exp_responsibilities_${index}" rows="5"></textarea>
+                            <label for="exp_responsibilities${index}" class="col-12 col-form-label">{{ __('Zakres obowiązków') }}</label>
+                            <textarea class="form-control col-12" name="exp_responsibilities[]" id="exp_responsibilities${index}" rows="5"></textarea>
                         </div>
                     </div>
-                    <button type="button" class="btn btn-primary addButton" onclick="addNewPosition()">{{ __('Dodaj Pozycję') }}</button>
-                    <button type="button" class="btn btn-primary delButton" onclick="removePosition(${index})">{{ __('Usuń Pozycję') }}</button>
 
-                </div>`);
+                        <button type="button" class="btn btn-primary addButton" onclick="addNewExpirience()">{{ __('Dodaj Pozycję') }}</button>
+                        <button type="button" class="btn btn-primary delButton" onclick="removePosition(${index})">{{ __('Usuń Pozycję') }}</button>
+                </div>
+            `);
         }
 
         function addNewEdu() {
@@ -413,62 +420,68 @@
             educations.append(`
                 <div class="accordion-body border" index="${index}">
                     <input type="hidden" name="edu_id[]" value="" >
-                    <input type="hidden" id="edu_in_progress_${index}" name="edu_in_progress[]" value="">
+                    <input type="hidden" id="edu_in_progress${index}" name="edu_in_progress[]" value="">
 
                     <div class="row">
+                        {{-- Start Date --}}
                         <div class="mb-3 row">
-                            <label for="edu_start_date_${index}" class="col-sm-2 col-form-label">{{ __('Data rozpoczęcia') }}</label>
-                            <div class="col-sm-10">
-                            <input type="date" class="form-control" id="edu_start_date_${index}" name="edu_start_date[]" value="">
+                            <label for="edu_start_date${index}" class="col-12 col-md-2 col-form-label">{{ __('Data rozpoczęcia') }}</label>
+                            <div class="col-12 col-md-10">
+                                <input type="date" class="form-control" id="edu_start_date${index}" name="edu_start_date[]" value="">
                             </div>
                         </div>
 
+                        {{-- End Date --}}
                         <div class="mb-3 row">
-                            <label for="end_date_${index}" class="col-sm-2 col-form-label">{{ __('Data zakończenia') }}</label>
-                            <div class="col-sm-10">
-                            <div class="input-group mb-3">
-                                <div class="input-group">
-                                <input type="date" class="form-control" id="edu_end_date_${index}" name="edu_end_date[]" value="">
-                                <div class="input-group-text">
-                                    <input
-                                        class="form-check-input mt-0 me-2"
-                                        onclick="onCheckBoxChange( 'edu' , ${index})"
-                                        type="checkbox"
-                                        id="edu_checkbox_${index}"
-                                        aria-label="{{ __('Trwa nadal') }}"
-                                    >
-                                    {{ __('Trwa nadal') }}
+                            <label for="end_date${index}" class="col-12 col-md-2 col-form-label">{{ __('Data zakończenia') }}</label>
+                            <div class="col-12 col-md-10">
+                                <div class="input-group mb-3">
+                                    <div class="input-group">
+                                    <input type="date" class="form-control" id="edu_end_date${index}" name="edu_end_date[]" value="">
+                                    <div class="input-group-text">
+                                        <input
+                                            class="form-check-input mt-0 me-2"
+                                            onclick="onCheckBoxChange( 'edu' , ${index})"
+                                            type="checkbox"
+                                            id="edu_checkbox${index}"
+                                            aria-label="{{ __('Trwa nadal') }}"
+                                        >
+                                        {{ __('Trwa nadal') }}
+                                    </div>
+                                    </div>
                                 </div>
-                                </div>
-                            </div>
                             </div>
                         </div>
 
+                        {{-- Name --}}
                         <div class="mb-3 row">
-                            <label for="edu_education_name_${index}" class="col-sm-2 col-form-label">{{ __('Nazwa uczelni') }}</label>
-                            <div class="col-sm-10">
-                            <input type="text" class="form-control" id="edu_education_name_${index}" name="edu_education_name_[]" value="">
+                            <label for="edu_education_name${index}" class="col-12 col-md-2 col-form-label">{{ __('Nazwa uczelni') }}</label>
+                            <div class="col-12 col-md-10">
+                                <input type="text" class="form-control" id="edu_education_name${index}" name="edu_education_name[]" value="">
                             </div>
                         </div>
 
+                        {{-- Major --}}
                         <div class="mb-3 row">
-                            <label for="edu_education_name_${index}" class="col-sm-2 col-form-label">{{ __('Kierunek') }}</label>
-                            <div class="col-sm-10">
-                            <input type="text" class="form-control" id="edu_education_name_${index}" name="edu_education_name_[]" value="">
+                            <label for="edu_major${index}" class="col-12 col-md-2 col-form-label">{{ __('Kierunek') }}</label>
+                            <div class="col-12 col-md-10">
+                            <input type="text" class="form-control" id="edu_major${index}" name="edu_major[]" value="">
                             </div>
                         </div>
 
+                        {{-- Title --}}
                         <div class="mb-3 row">
-                            <label for="edu_title_${index}" class="col-sm-2 col-form-label">{{ __('Tytuł') }}</label>
-                            <div class="col-sm-10">
-                            <input type="text" class="form-control" id="edu_title_${index}" name="edu_title[]" value="">
+                            <label for="edu_title${index}" class="col-12 col-md-2 col-form-label">{{ __('Tytuł') }}</label>
+                            <div class="col-12 col-md-10">
+                            <input type="text" class="form-control" id="edu_title${index}" name="edu_title[]" value="">
                             </div>
                         </div>
                     </div>
-                    <button type="button" class="btn btn-primary addButton" onclick="addNewEdu()">{{ __('Dodaj Pozycję') }}</button>
-                    <button type="button" class="btn btn-primary delButton" onclick="removePosition(${index})">{{ __('Usuń Pozycję') }}</button>
 
-                </div>`);
+                        <button type="button" class="btn btn-primary addButton" onclick="addNewEdu()">{{ __('Dodaj Pozycję') }}</button>
+                        <button type="button" class="btn btn-primary delButton" onclick="removePosition(${index})">{{ __('Usuń Pozycję') }}</button>
+                </div>
+            `);
 
         }
 
@@ -494,13 +507,12 @@
 
                     <div class="row">
                         <div class="mb-3 row">
-                            <label for="skill_name_${index}" class="col-sm-2 col-form-label">{{ __('Nazwa umiejętności') }}</label>
-                            <div class="col-sm-10">
-                            <input type="text" class="form-control" id="skill_name_${index}" name="skill_name[]" value="">
+                            <label for="skill_name${index}" class="col-12 col-md-2 col-form-label">{{ __('Nazwa umiejętności') }}</label>
+                            <div class="col-12 col-md-10">
+                                <input type="text" class="form-control" id="skill_name${index}" name="skill_name[]" value="">
                             </div>
                         </div>
                     </div>
-
                     <button type="button" class="btn btn-primary addButton" onclick="addNewSkill()">{{ __('Dodaj Pozycję') }}</button>
                     <button type="button" class="btn btn-primary delButton" onclick="removePosition(${index})">{{ __('Usuń Pozycję') }}</button>
                 </div>
@@ -529,17 +541,17 @@
 
                     <div class="row">
                         <div class="mb-3 row">
-                            <label for="int_name_${index}" class="col-sm-2 col-form-label">{{ __('Nazwa zainteresowania') }}</label>
-                            <div class="col-sm-10">
-                            <input type="text" class="form-control" id="int_name_${index}" name="int_name[]" value="">
+                            <label for="int_name${index}" class="col-12 col-md-2 col-form-label">{{ __('Nazwa zainteresowania') }}</label>
+                            <div class="col-12 col-md-10">
+                                <input type="text" class="form-control" id="int_name${index}" name="int_name[]" value="">
                             </div>
                         </div>
                     </div>
 
                     <button type="button" class="btn btn-primary addButton" onclick="addNewInt()">{{ __('Dodaj Pozycję') }}</button>
                     <button type="button" class="btn btn-primary delButton" onclick="removePosition(${index})">{{ __('Usuń Pozycję') }}</button>
-                </div>`
-            );
+                </div>
+            `);
         }
 
         function removePosition(index) {
@@ -547,14 +559,14 @@
         }
 
         function onCheckBoxChange(prefix, index) {
-            const target = $('#' + prefix + '_in_progress_' + index);
-            const checked = $('#' + prefix + '_checkbox_' + index).prop('checked');
+            const target = $('#' + prefix + '_in_progress' + index);
+            const checked = $('#' + prefix + '_checkbox' + index).prop('checked');
 
             if(checked) {
-                $('#' + prefix + '_end_date_' + index).attr('readonly', true);
-                $('#' + prefix + '_end_date_' + index).val('');
+                $('#' + prefix + '_end_date' + index).attr('readonly', true);
+                $('#' + prefix + '_end_date' + index).val('');
             } else {
-                $('#' + prefix + '_end_date_' + index).attr("readonly", false);
+                $('#' + prefix + '_end_date' + index).attr("readonly", false);
             }
 
             target.val(checked ? 1 : 0);

@@ -99,7 +99,7 @@ class UserController extends Controller
         }
 
 
-        $user = User::find($user_id)->where('deleted', 0);
+        $user = User::where('id', $user_id)->where('deleted', 0);
         $user->updated_at = date('Y-m-d H:i:s');
         $user->updated_by = $user_id;
         $user->update((array) $form_datas['user']);
@@ -108,9 +108,9 @@ class UserController extends Controller
     private function updatePhoto($user_id, $form_datas)
     {
         // Remove old photo
-        $user = User::find($user_id)->where('deleted', 0)->first();
+        $user = User::where('id', $user_id)->where('deleted', 0)->first();
         if($user->photo_id) {
-            Photo::find($user->photo_id)->where('deleted', 0)->update([
+            Photo::where('id', $user->photo_id)->where('deleted', 0)->update([
                 'deleted' => '1',
                 'deleted_at' => date('Y-m-d H:i:s'),
             ]);

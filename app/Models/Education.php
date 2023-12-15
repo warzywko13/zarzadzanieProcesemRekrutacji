@@ -26,5 +26,6 @@ class Education extends Model
         'start_date',
         'name',
         'title',
+        'major'
     ];
 }

@@ -21,7 +21,7 @@ class EducationController extends Controller
                 'name'              => $form['edu_education_name'][$index],
                 'major'             => $form['edu_major'][$index],
                 'title'             => $form['edu_title'][$index],
-                'in_progress'       => $form['exp_in_progress'][$index] ?: 0,
+                'in_progress'       => $form['edu_in_progress'][$index] ?: 0,
             ];
         }
 
@@ -111,7 +111,7 @@ class EducationController extends Controller
         }
 
         if($to_delete) {
-            Education::whereIn('id', $to_delete)->update([
+            Education::where('id', $to_delete)->update([
                 'deleted' => '1',
                 'deleted_at' => date('Y-m-d H:i:s'),
                 'deleted_by' => $user_id
@@ -121,7 +121,7 @@ class EducationController extends Controller
         // Add Update Education
         foreach($form_datas['education'] as $edu) {
             if($edu->id) {
-                $record = Education::where('id', $edu->id);
+                $record = Education::where('id', $edu->id)->where('deleted', 0);
                 if($record) {
                     $edu->updated_by = $user_id;
                     $record->update((array) $edu);

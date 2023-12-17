@@ -297,6 +297,23 @@
                 </div>
             </div>
 
+            {{-- Informacje dodatkowe --}}
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#additional_information" aria-expanded="true" aria-controls="additional_information">
+                        {{ __('Dodatkowe informacje') }}
+                    </button>
+                </h2>
+                <div id="additional_information" class="accordion-collapse collapse show">
+                    <div class="accordion-body">
+                        <div class="mb-3 row">
+                            <label for="add_info" class="col-12 col-form-label">{{ __('Dodatkowe informacje') }}</label>
+                            <textarea class="form-control col-12" {{ $disabled }}  name="add_info" id="add_info" rows="5">{{ isset($user->add_info) ? $user->add_info : '' }}</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             @if(!$disabled)
                 <div class="container btn-lg">
                     <button type="submit" name="save" value="1" class="d-block mx-auto btn btn-primary addButton my-2 px-5 py-2">{{ __('Zapisz Formularz') }}</button>

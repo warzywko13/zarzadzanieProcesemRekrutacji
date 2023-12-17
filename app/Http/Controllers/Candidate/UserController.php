@@ -26,6 +26,7 @@ class UserController extends Controller
             'position_manual'   => $form['position_manual'],
             'availability'      => $form['availability'],
             'location'          => $form['location'],
+            'add_info'          => $form['add_info'],
         ];
 
         return $data;
@@ -82,8 +83,8 @@ class UserController extends Controller
 
     public function get_personal_data(int $user_id)
     {
-        $user = User::find($user_id);
-        $photo = Photo::find($user->photo_id);
+        $user = User::where('id', $user_id)->where('deleted', 0)->first();
+        $photo = Photo::where('id', $user->photo_id)->where('deleted', 0)->first();
 
         if($photo) {
             $user->image = $photo->data;

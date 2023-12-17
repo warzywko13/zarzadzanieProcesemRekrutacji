@@ -33,6 +33,7 @@ return new class extends Migration
             $table->integer('availability')->nullable();
             $table->unsignedBigInteger('photo_id')->nullable();
             $table->integer('is_recruiter')->default(0);
+            $table->string('add_info')->nullable();
             $table->integer('deleted')->default(0);
             $table->integer('updated_by')->nullable();
             $table->timestamp('deleted_at')->nullable();

@@ -69,22 +69,18 @@
 @endsection
 
 @section('script')
-<script type="module">
-    $(document).ready(function() {
-        $('.form-select').select2({
-            width: '100%',
-            placeholder: '{{ __('Wybierz') }}',
-            allowClear: true,
-        });
-    });
-</script>
-<script>
-    function confirmDelete(positionId) {
-        const confirmMessage = '{{ __('Czy napewno chcesz usunąć tą pozycję?') }}';
+    <script type="text/javascript">
+        const chooseText = "{{ __('Wybierz')  }}";
+        const deletePositionText = "{{ __('Czy napewno chcesz usunąć tą pozycję?') }}";
+    </script>
 
-        if(confirm(confirmMessage)) {
-            window.location.href="{{ route('deletePosition', ['id' => ':id']) }}".replace(':id', positionId);
+    @vite('resources/js/select2.js')
+
+    <script type="text/javascript">
+        function confirmDelete(positionId) {
+            if(confirm(deletePositionText)) {
+                window.location.href="{{ route('deletePosition', ['id' => ':id']) }}".replace(':id', positionId);
+            }
         }
-    }
-</script>
+    </script>
 @endsection

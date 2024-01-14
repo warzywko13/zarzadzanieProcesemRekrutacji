@@ -325,291 +325,306 @@
 
 
 @section('script')
-<script type="module">
-    $(document).ready(function() {
-        $('.form-select').select2({
-            width: '100%',
-            height: '100%',
-            placeholder: '{{ __('Wybierz') }}',
-            allowClear: true,
-        });
-    });
-</script>
-@if(!$disabled)
-    <script>
-        function addNewExpirience() {
-            const expirience = $('#expirience');
+    <script type="text/javascript">
+        const chooseText = "{{ __('Wybierz')  }}";
+        const youCanAddText = "{{ __('Możesz dodać maksymalnie') }}";
 
-            const last = $('#expirience_last').val();
-            $('#expirience_last').val(+last + 1);
-            const index = $('#expirience_last').val();
+        const expirienceText = "{{ __('doświadczeń zawodowych') }}";
+        const educationText = "{{ __('wykształceń') }}";
+        const skillText = "{{ __('umiejętności') }}";
+        const interestText = "{{ __('zainteresowań') }}";
 
-            // Validation
-            const limit = 5;
-            const expirience_length = $('#expirience .accordion-body').length;
+        const startDateText = "{{ __('Data rozpoczęcia') }}";
+        const endDateText = "{{ __('Data zakończenia') }}";
+        const continuesText = "{{ __('Trwa nadal') }}";
+        const companyText = "{{ __('Nazwa firmy') }}";
+        const positionText = "{{ __('Stanowisko') }}";
+        const responsibilitiesText = "{{ __('Zakres obowiązków') }}";
+        const addPositionText = "{{ __('Dodaj Pozycję') }}";
+        const delPositionText = "{{ __('Usuń Pozycję') }}";
 
-            if(expirience_length >= limit) {
-                alert(`{{ __('Możesz dodać maksymalnie') }} ${limit} {{ __('doświadczeń zawodowych') }}`);
-                return false;
-            }
+        const studyNameText = "{{ __('Nazwa uczelni') }}";
+        const directionText = "{{ __('Kierunek') }}";
+        const titleText = "{{ __('Tytuł') }}";
+        const skillNameText = "{{ __('Nazwa umiejętności') }}";
+        const interestNameText = "{{ __('Nazwa zainteresowania') }}";
+    </script>
+    @vite('resources/js/select2.js')
 
-            expirience.append(`
-                <div class="accordion-body border" index="${index}">
-                    <input type="hidden" name="exp_id[]" value="" >
-                    <input type="hidden" id="exp_in_progress${index}" name="exp_in_progress[]" value="">
+    @if(!$disabled)
+        <script type="text/javascript">
+            function addNewExpirience() {
+                const expirience = $('#expirience');
 
-                    <div class="row">
-                        {{-- Start Date --}}
-                        <div class="mb-3 row">
-                            <label for="exp_start_date${index}" class="col-12 col-md-2 col-form-label">{{ __('Data rozpoczęcia') }}</label>
-                            <div class="col-12 col-md-10">
-                                <input type="date" class="form-control" id="exp_start_date${index}" name="exp_start_date[]" value="">
+                const last = $('#expirience_last').val();
+                $('#expirience_last').val(+last + 1);
+                const index = $('#expirience_last').val();
+
+                // Validation
+                const limit = 5;
+                const expirience_length = $('#expirience .accordion-body').length;
+
+                if(expirience_length >= limit) {
+                    alert(`${youCanAddText} ${limit} ${expirienceText}`);
+                    return false;
+                }
+
+                expirience.append(`
+                    <div class="accordion-body border" index="${index}">
+                        <input type="hidden" name="exp_id[]" value="" >
+                        <input type="hidden" id="exp_in_progress${index}" name="exp_in_progress[]" value="">
+
+                        <div class="row">
+                            {{-- Start Date --}}
+                            <div class="mb-3 row">
+                                <label for="exp_start_date${index}" class="col-12 col-md-2 col-form-label">${startDateText}</label>
+                                <div class="col-12 col-md-10">
+                                    <input type="date" class="form-control" id="exp_start_date${index}" name="exp_start_date[]" value="">
+                                </div>
                             </div>
-                        </div>
 
-                        {{-- End Date --}}
-                        <div class="mb-3 row">
-                            <label for="end_date${index}" class="col-12 col-md-2 col-form-label">{{ __('Data zakończenia') }}</label>
-                            <div class="col-12 col-md-10">
-                                <div class="input-group mb-3">
-                                    <div class="input-group">
-                                        <input type="date" class="form-control" id="exp_end_date${index}" name="exp_end_date[]" value="">
-                                        <div class="input-group-text">
-                                            <input
-                                                class="form-check-input mt-0 me-2"
-                                                onclick="onCheckBoxChange('exp', ${index})"
-                                                type="checkbox"
-                                                id="exp_checkbox${index}"
-                                                aria-label="{{ __('Trwa nadal') }}"
-                                            >
-                                            {{ __('Trwa nadal') }}
+                            {{-- End Date --}}
+                            <div class="mb-3 row">
+                                <label for="end_date${index}" class="col-12 col-md-2 col-form-label">${endDateText}</label>
+                                <div class="col-12 col-md-10">
+                                    <div class="input-group mb-3">
+                                        <div class="input-group">
+                                            <input type="date" class="form-control" id="exp_end_date${index}" name="exp_end_date[]" value="">
+                                            <div class="input-group-text">
+                                                <input
+                                                    class="form-check-input mt-0 me-2"
+                                                    onclick="onCheckBoxChange('exp', ${index})"
+                                                    type="checkbox"
+                                                    id="exp_checkbox${index}"
+                                                    aria-label="${continuesText}"
+                                                >
+                                                ${continuesText}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        {{-- Name --}}
-                        <div class="mb-3 row">
-                            <label for="exp_company_name${index}" class="col-12 col-md-2 col-form-label">{{ __('Nazwa firmy') }}</label>
-                            <div class="col-12 col-md-10">
-                                <input type="text" class="form-control" id="exp_company_name${index}" name="exp_company_name[]" value="">
+                            {{-- Name --}}
+                            <div class="mb-3 row">
+                                <label for="exp_company_name${index}" class="col-12 col-md-2 col-form-label">${companyText}</label>
+                                <div class="col-12 col-md-10">
+                                    <input type="text" class="form-control" id="exp_company_name${index}" name="exp_company_name[]" value="">
+                                </div>
+                            </div>
+
+                            {{-- Position --}}
+                            <div class="mb-3 row">
+                                <label for="exp_position${index}" class="col-12 col-md-2 col-form-label">${positionText}</label>
+                                <div class="col-12 col-md-10">
+                                <input type="text" class="form-control" id="exp_position${index}" name="exp_position[]" value="">
+                                </div>
+                            </div>
+
+                            {{-- Responsibilities --}}
+                            <div class="mb-3 row">
+                                <label for="exp_responsibilities${index}" class="col-12 col-form-label">${responsibilitiesText}</label>
+                                <textarea class="form-control col-12" name="exp_responsibilities[]" id="exp_responsibilities${index}" rows="5"></textarea>
                             </div>
                         </div>
 
-                        {{-- Position --}}
-                        <div class="mb-3 row">
-                            <label for="exp_position${index}" class="col-12 col-md-2 col-form-label">{{ __('Stanowisko') }}</label>
-                            <div class="col-12 col-md-10">
-                            <input type="text" class="form-control" id="exp_position${index}" name="exp_position[]" value="">
-                            </div>
-                        </div>
-
-                        {{-- Responsibilities --}}
-                        <div class="mb-3 row">
-                            <label for="exp_responsibilities${index}" class="col-12 col-form-label">{{ __('Zakres obowiązków') }}</label>
-                            <textarea class="form-control col-12" name="exp_responsibilities[]" id="exp_responsibilities${index}" rows="5"></textarea>
-                        </div>
+                            <button type="button" class="btn btn-primary addButton" onclick="addNewExpirience()">${addPositionText}</button>
+                            <button type="button" class="btn btn-primary delButton" onclick="removePosition(${index})">${delPositionText}}</button>
                     </div>
-
-                        <button type="button" class="btn btn-primary addButton" onclick="addNewExpirience()">{{ __('Dodaj Pozycję') }}</button>
-                        <button type="button" class="btn btn-primary delButton" onclick="removePosition(${index})">{{ __('Usuń Pozycję') }}</button>
-                </div>
-            `);
-        }
-
-        function addNewEdu() {
-            const educations = $('#education');
-
-            const last = $('#education_last').val();
-            $('#education_last').val(+last + 1);
-            const index = $('#education_last').val()
-
-            // Validation
-            const limit = 5;
-            const education_length = $('#education .accordion-body').length;
-
-            if(education_length >= limit) {
-                alert(`{{ __('Możesz dodać maksymalnie') }} ${limit} {{ __('wykształceń') }}`);
-                return false;
+                `);
             }
 
-            educations.append(`
-                <div class="accordion-body border" index="${index}">
-                    <input type="hidden" name="edu_id[]" value="" >
-                    <input type="hidden" id="edu_in_progress${index}" name="edu_in_progress[]" value="">
+            function addNewEdu() {
+                const educations = $('#education');
 
-                    <div class="row">
-                        {{-- Start Date --}}
-                        <div class="mb-3 row">
-                            <label for="edu_start_date${index}" class="col-12 col-md-2 col-form-label">{{ __('Data rozpoczęcia') }}</label>
-                            <div class="col-12 col-md-10">
-                                <input type="date" class="form-control" id="edu_start_date${index}" name="edu_start_date[]" value="">
+                const last = $('#education_last').val();
+                $('#education_last').val(+last + 1);
+                const index = $('#education_last').val()
+
+                // Validation
+                const limit = 5;
+                const education_length = $('#education .accordion-body').length;
+
+                if(education_length >= limit) {
+                    alert(`${youCanAddText} ${limit} ${expirienceText}`);
+                    return false;
+                }
+
+                educations.append(`
+                    <div class="accordion-body border" index="${index}">
+                        <input type="hidden" name="edu_id[]" value="" >
+                        <input type="hidden" id="edu_in_progress${index}" name="edu_in_progress[]" value="">
+
+                        <div class="row">
+                            {{-- Start Date --}}
+                            <div class="mb-3 row">
+                                <label for="edu_start_date${index}" class="col-12 col-md-2 col-form-label">${startDateText}</label>
+                                <div class="col-12 col-md-10">
+                                    <input type="date" class="form-control" id="edu_start_date${index}" name="edu_start_date[]" value="">
+                                </div>
                             </div>
-                        </div>
 
-                        {{-- End Date --}}
-                        <div class="mb-3 row">
-                            <label for="end_date${index}" class="col-12 col-md-2 col-form-label">{{ __('Data zakończenia') }}</label>
-                            <div class="col-12 col-md-10">
-                                <div class="input-group mb-3">
-                                    <div class="input-group">
-                                    <input type="date" class="form-control" id="edu_end_date${index}" name="edu_end_date[]" value="">
-                                    <div class="input-group-text">
-                                        <input
-                                            class="form-check-input mt-0 me-2"
-                                            onclick="onCheckBoxChange( 'edu' , ${index})"
-                                            type="checkbox"
-                                            id="edu_checkbox${index}"
-                                            aria-label="{{ __('Trwa nadal') }}"
-                                        >
-                                        {{ __('Trwa nadal') }}
+                            {{-- End Date --}}
+                            <div class="mb-3 row">
+                                <label for="end_date${index}" class="col-12 col-md-2 col-form-label">${endDateText}</label>
+                                <div class="col-12 col-md-10">
+                                    <div class="input-group mb-3">
+                                        <div class="input-group">
+                                        <input type="date" class="form-control" id="edu_end_date${index}" name="edu_end_date[]" value="">
+                                        <div class="input-group-text">
+                                            <input
+                                                class="form-check-input mt-0 me-2"
+                                                onclick="onCheckBoxChange( 'edu' , ${index})"
+                                                type="checkbox"
+                                                id="edu_checkbox${index}"
+                                                aria-label="${continuesText}"
+                                            >
+                                            ${continuesText}
+                                        </div>
+                                        </div>
                                     </div>
-                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Name --}}
+                            <div class="mb-3 row">
+                                <label for="edu_education_name${index}" class="col-12 col-md-2 col-form-label">${studyNameText}</label>
+                                <div class="col-12 col-md-10">
+                                    <input type="text" class="form-control" id="edu_education_name${index}" name="edu_education_name[]" value="">
+                                </div>
+                            </div>
+
+                            {{-- Major --}}
+                            <div class="mb-3 row">
+                                <label for="edu_major${index}" class="col-12 col-md-2 col-form-label">${directionText}</label>
+                                <div class="col-12 col-md-10">
+                                <input type="text" class="form-control" id="edu_major${index}" name="edu_major[]" value="">
+                                </div>
+                            </div>
+
+                            {{-- Title --}}
+                            <div class="mb-3 row">
+                                <label for="edu_title${index}" class="col-12 col-md-2 col-form-label">${titleText}</label>
+                                <div class="col-12 col-md-10">
+                                <input type="text" class="form-control" id="edu_title${index}" name="edu_title[]" value="">
                                 </div>
                             </div>
                         </div>
 
-                        {{-- Name --}}
-                        <div class="mb-3 row">
-                            <label for="edu_education_name${index}" class="col-12 col-md-2 col-form-label">{{ __('Nazwa uczelni') }}</label>
-                            <div class="col-12 col-md-10">
-                                <input type="text" class="form-control" id="edu_education_name${index}" name="edu_education_name[]" value="">
-                            </div>
-                        </div>
-
-                        {{-- Major --}}
-                        <div class="mb-3 row">
-                            <label for="edu_major${index}" class="col-12 col-md-2 col-form-label">{{ __('Kierunek') }}</label>
-                            <div class="col-12 col-md-10">
-                            <input type="text" class="form-control" id="edu_major${index}" name="edu_major[]" value="">
-                            </div>
-                        </div>
-
-                        {{-- Title --}}
-                        <div class="mb-3 row">
-                            <label for="edu_title${index}" class="col-12 col-md-2 col-form-label">{{ __('Tytuł') }}</label>
-                            <div class="col-12 col-md-10">
-                            <input type="text" class="form-control" id="edu_title${index}" name="edu_title[]" value="">
-                            </div>
-                        </div>
+                            <button type="button" class="btn btn-primary addButton" onclick="addNewEdu()">${addPositionText}</button>
+                            <button type="button" class="btn btn-primary delButton" onclick="removePosition(${index})">${delPositionText}</button>
                     </div>
+                `);
 
-                        <button type="button" class="btn btn-primary addButton" onclick="addNewEdu()">{{ __('Dodaj Pozycję') }}</button>
-                        <button type="button" class="btn btn-primary delButton" onclick="removePosition(${index})">{{ __('Usuń Pozycję') }}</button>
-                </div>
-            `);
-
-        }
-
-        function addNewSkill() {
-            const skill = $('#skill');
-
-            const last = $('#skill_last').val();
-            $('#skill_last').val(+last + 1);
-            const index = $('#skill_last').val();
-
-            // Validation
-            const limit = 10;
-            const skill_length = $('#skill .accordion-body').length;
-
-            if(skill_length >= limit) {
-                alert(`{{ __('Możesz dodać maksymalnie') }} ${limit} {{ __('umiejętności') }}`);
-                return false;
             }
 
-            skill.append(`
-                <div class="accordion-body border" index="${index}">
-                    <input type="hidden" name="skill_id[]" value="" >
+            function addNewSkill() {
+                const skill = $('#skill');
 
-                    <div class="row">
-                        <div class="mb-3 row">
-                            <label for="skill_name${index}" class="col-12 col-md-2 col-form-label">{{ __('Nazwa umiejętności') }}</label>
-                            <div class="col-12 col-md-10">
-                                <input type="text" class="form-control" id="skill_name${index}" name="skill_name[]" value="">
+                const last = $('#skill_last').val();
+                $('#skill_last').val(+last + 1);
+                const index = $('#skill_last').val();
+
+                // Validation
+                const limit = 10;
+                const skill_length = $('#skill .accordion-body').length;
+
+                if(skill_length >= limit) {
+                    alert(`${youCanAddText} ${limit} ${skillText}`);
+                    return false;
+                }
+
+                skill.append(`
+                    <div class="accordion-body border" index="${index}">
+                        <input type="hidden" name="skill_id[]" value="" >
+
+                        <div class="row">
+                            <div class="mb-3 row">
+                                <label for="skill_name${index}" class="col-12 col-md-2 col-form-label">${skillNameText}</label>
+                                <div class="col-12 col-md-10">
+                                    <input type="text" class="form-control" id="skill_name${index}" name="skill_name[]" value="">
+                                </div>
                             </div>
                         </div>
+                        <button type="button" class="btn btn-primary addButton" onclick="addNewSkill()">${addPositionText}</button>
+                        <button type="button" class="btn btn-primary delButton" onclick="removePosition(${index})">${delPositionText}</button>
                     </div>
-                    <button type="button" class="btn btn-primary addButton" onclick="addNewSkill()">{{ __('Dodaj Pozycję') }}</button>
-                    <button type="button" class="btn btn-primary delButton" onclick="removePosition(${index})">{{ __('Usuń Pozycję') }}</button>
-                </div>
-            `);
-        }
-
-        function addNewInt() {
-            const interests = $('#interests');
-
-            const last = $('#interests_last').val();
-            $('#interests_last').val(+last + 1);
-            const index = $('#interests_last').val();
-
-            // Validation
-            const limit = 10;
-            const interests_length = $('#interests .accordion-body').length;
-
-            if(interests_length >= limit) {
-                alert(`{{ __('Możesz dodać maksymalnie') }} ${limit} {{ __('zainteresowań') }}`);
-                return false;
+                `);
             }
 
-            interests.append(`
-                <div class="accordion-body border" index="${index}">
-                    <input type="hidden" name="int_id[]" value="" >
+            function addNewInt() {
+                const interests = $('#interests');
 
-                    <div class="row">
-                        <div class="mb-3 row">
-                            <label for="int_name${index}" class="col-12 col-md-2 col-form-label">{{ __('Nazwa zainteresowania') }}</label>
-                            <div class="col-12 col-md-10">
-                                <input type="text" class="form-control" id="int_name${index}" name="int_name[]" value="">
+                const last = $('#interests_last').val();
+                $('#interests_last').val(+last + 1);
+                const index = $('#interests_last').val();
+
+                // Validation
+                const limit = 10;
+                const interests_length = $('#interests .accordion-body').length;
+
+                if(interests_length >= limit) {
+                    alert(`${youCanAddText} ${limit} {{ __('zainteresowań') }}`);
+                    return false;
+                }
+
+                interests.append(`
+                    <div class="accordion-body border" index="${index}">
+                        <input type="hidden" name="int_id[]" value="" >
+
+                        <div class="row">
+                            <div class="mb-3 row">
+                                <label for="int_name${index}" class="col-12 col-md-2 col-form-label">${interestNameText}</label>
+                                <div class="col-12 col-md-10">
+                                    <input type="text" class="form-control" id="int_name${index}" name="int_name[]" value="">
+                                </div>
                             </div>
                         </div>
+
+                        <button type="button" class="btn btn-primary addButton" onclick="addNewInt()">${addPositionText}</button>
+                        <button type="button" class="btn btn-primary delButton" onclick="removePosition(${index})">${delPositionText}</button>
                     </div>
-
-                    <button type="button" class="btn btn-primary addButton" onclick="addNewInt()">{{ __('Dodaj Pozycję') }}</button>
-                    <button type="button" class="btn btn-primary delButton" onclick="removePosition(${index})">{{ __('Usuń Pozycję') }}</button>
-                </div>
-            `);
-        }
-
-        function removePosition(index) {
-            $(`.accordion-body[index="${index}"]`).remove();
-        }
-
-        function onCheckBoxChange(prefix, index) {
-            const target = $('#' + prefix + '_in_progress' + index);
-            const checked = $('#' + prefix + '_checkbox' + index).prop('checked');
-
-            if(checked) {
-                $('#' + prefix + '_end_date' + index).attr('readonly', true);
-                $('#' + prefix + '_end_date' + index).val('');
-            } else {
-                $('#' + prefix + '_end_date' + index).attr("readonly", false);
+                `);
             }
 
-            target.val(checked ? 1 : 0);
-        }
-
-        function onPositionCheckbox() {
-            const checked = $('#position_checkbox').prop('checked');
-            const position_id = $('#position_id');
-            const position_label = $('#position_name_label');
-            const position_manual = $('#position_manual');
-            const position_name = $('#position_name');
-
-            $('#postion_manual').val(checked ? 1 : 0);
-
-            if(checked) {
-                position_manual.val(1);
-                position_id.val(null).trigger('change');
-                position_id.prop('disabled', true);
-                position_label.removeClass('d-none');
-            } else {
-                position_manual.val(0);
-                position_id.prop('disabled', false);
-                position_label.addClass('d-none');
-                position_name.val(null);
+            function removePosition(index) {
+                $(`.accordion-body[index="${index}"]`).remove();
             }
-        }
-    </script>
-@endif
+
+            function onCheckBoxChange(prefix, index) {
+                const target = $('#' + prefix + '_in_progress' + index);
+                const checked = $('#' + prefix + '_checkbox' + index).prop('checked');
+
+                if(checked) {
+                    $('#' + prefix + '_end_date' + index).attr('readonly', true).val('');
+                } else {
+                    $('#' + prefix + '_end_date' + index).attr("readonly", false);
+                }
+
+                target.val(checked ? 1 : 0);
+            }
+
+            function onPositionCheckbox() {
+                const checked = $('#position_checkbox').prop('checked');
+                const position_id = $('#position_id');
+                const position_label = $('#position_name_label');
+                const position_manual = $('#position_manual');
+                const position_name = $('#position_name');
+
+                position_manual.val(checked ? 1 : 0);
+
+                if(checked) {
+                    position_manual.val(1);
+                    position_id.val(null).trigger('change');
+                    position_id.prop('disabled', true);
+                    position_label.removeClass('d-none');
+                } else {
+                    position_manual.val(0);
+                    position_id.prop('disabled', false);
+                    position_label.addClass('d-none');
+                    position_name.val(null);
+                }
+            }
+        </script>
+    @endif
 @endsection

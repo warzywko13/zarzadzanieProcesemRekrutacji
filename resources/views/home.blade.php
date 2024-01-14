@@ -138,14 +138,8 @@
 @endsection
 
 @section('script')
-<script type="module">
-    $(document).ready(function() {
-        $('.form-select').select2({
-            width: '100%',
-            height: '100%',
-            placeholder: '{{ __('Wybierz') }}',
-            allowClear: true,
-        });
-    });
-</script>
+    <script type="text/javascript">
+        const chooseText = "{{ __('Wybierz')  }}";
+    </script>
+    @vite('resources/js/select2.js')
 @endsection

@@ -16,5 +16,8 @@ class Position extends Model
      */
     protected $fillable = [
         'name',
+        'deleted',
+        'deleted_at',
+        'deleted_by'
     ];
 }

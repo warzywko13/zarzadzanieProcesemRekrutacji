@@ -8,7 +8,7 @@
     <form method="POST" action="{{route('addEdit')}}" enctype="multipart/form-data">
         @csrf
         <div class="accordion mt-5" id="accordionPanels">
-            {{-- Poszukuję --}}
+            {{-- Looking for --}}
             <div class="accordion-item">
                 <h2 class="accordion-header">
                     <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#looking_for" aria-expanded="true" aria-controls="looking_for">
@@ -19,7 +19,7 @@
                     <div class="accordion-body">
                         <input type="hidden" name="position_manual" id="position_manual" value="{{ $user->position_manual }}">
 
-                        {{-- Docelowe stanowisko --}}
+                        {{-- Position --}}
                         <div class="input-group">
                             <label for="position_id" class="col-12 col-md-2 col-form-label">{{ __('Docelowe stanowisko') }}</label>
                             <div class="col-12 col-md-10">
@@ -55,7 +55,7 @@
                             </div>
                         </div>
 
-                        {{-- Docelowe stanowisko inne --}}
+                        {{-- Position name --}}
                         <div class="mb-3 row {{ $user->position_manual == 0 ? 'd-none' : ''  }}" id="position_name_label">
                             <label for="position_name" class="col-12 col-md-2 col-form-label">{{ __('Podaj stanowisko') }}</label>
                             <div class="col-12 col-md-10">
@@ -68,7 +68,7 @@
                             </div>
                         </div>
 
-                        {{-- Lokalizacja --}}
+                        {{-- Location --}}
                         <div class="mb-3 row">
                             <label for="location" class="col-12 col-md-2 col-form-label">{{ __('Lokalizacja') }}</label>
                             <div class="col-12 col-md-10">
@@ -76,7 +76,7 @@
                             </div>
                         </div>
 
-                        {{-- Od kiedy mogę zacząć --}}
+                        {{-- Availability --}}
                         <div class="mb-3 row">
                             <label for="availability" class="col-12 col-md-2 col-form-label">{{ __('Dostępność') }}</label>
                             <div class="col-12 col-md-10">
@@ -92,7 +92,7 @@
                 </div>
             </div>
 
-            {{-- Dane osobowe --}}
+            {{-- Personal data --}}
             <div class="accordion-item">
               <h2 class="accordion-header">
                 <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#user" aria-expanded="true" aria-controls="user">
@@ -102,7 +102,7 @@
               <div id="user" class="accordion-collapse collapse show">
                 <div class="accordion-body">
 
-                    {{-- Imię --}}
+                    {{-- Firstname --}}
                     <div class="mb-3 row">
                         <label for="firstname" class="col-12 col-md-2 col-form-label">{{ __('Imię') }}</label>
                         <div class="col-12 col-md-10">
@@ -115,7 +115,7 @@
                         </div>
                     </div>
 
-                    {{-- Nazwisko --}}
+                    {{-- Lastname --}}
                     <div class="mb-3 row">
                         <label for="lastname" class="col-12 col-md-2 col-form-label">{{ __('Nazwisko') }}</label>
                         <div class="col-12 col-md-10">
@@ -128,7 +128,7 @@
                         </div>
                     </div>
 
-                    {{-- Data urodzenia --}}
+                    {{-- Birthday --}}
                     <div class="mb-3 row">
                         <label for="birthday" class="col-12 col-md-2 col-form-label">{{ __('Wiek') }}</label>
                         <div class="col-12 col-md-10">
@@ -141,7 +141,7 @@
                         </div>
                     </div>
 
-                    {{-- Płeć --}}
+                    {{-- Sex --}}
                     <div class="mb-3 row">
                         <label for="sex" class="col-12 col-md-2 col-form-label">{{ __('Płeć') }}</label>
                         <div class="col-12 col-md-10">
@@ -158,7 +158,7 @@
                         </div>
                     </div>
 
-                    {{-- Adres e-mail --}}
+                    {{-- Email --}}
                     <div class="mb-3 row">
                         <label for="email" class="col-12 col-md-2 col-form-label">{{ __('Email') }}</label>
                         <div class="col-12 col-md-10">
@@ -171,7 +171,7 @@
                         </div>
                     </div>
 
-                    {{-- Numer telefonu --}}
+                    {{-- Phone number --}}
                     <div class="mb-3 row">
                         <label for="phone" class="col-12 col-md-2 col-form-label">{{ __('Numer telefonu') }}</label>
                         <div class="col-12 col-md-10">
@@ -184,7 +184,33 @@
                         </div>
                     </div>
 
-                    {{-- Ulica --}}
+                    {{-- City --}}
+                    <div class="mb-3 row">
+                        <label for="city" class="col-12 col-md-2 col-form-label">{{ __('Miasto') }}</label>
+                        <div class="col-12 col-md-10">
+                            <input type="text" {{ $disabled }} class="form-control" id="city" name="city" value="{{ $user->city }}">
+                            @isset($user->error['city'])
+                                <p class="text-danger fw-bold">
+                                    {{ $user->error['city'] }}!
+                                </p>
+                            @endisset
+                        </div>
+                    </div>
+
+                    {{-- Post code --}}
+                    <div class="mb-3 row">
+                        <label for="post_code" class="col-12 col-md-2 col-form-label">{{ __('Kod pocztowy') }}</label>
+                        <div class="col-12 col-md-10">
+                            <input type="text" {{ $disabled }} class="form-control" id="post_code" name="post_code" value="{{ $user->post_code }}">
+                            @isset($user->error['post_code'])
+                                <p class="text-danger fw-bold">
+                                    {{ $user->error['post_code'] }}!
+                                </p>
+                            @endisset
+                        </div>
+                    </div>
+
+                    {{-- Street --}}
                     <div class="mb-3 row">
                         <label for="street" class="col-12 col-md-2 col-form-label">{{ __('Ulica') }}</label>
                         <div class="col-12 col-md-10">
@@ -197,7 +223,7 @@
                         </div>
                     </div>
 
-                    {{-- Numer domu --}}
+                    {{-- Street number --}}
                     <div class="mb-3 row">
                         <label for="street_number" class="col-12 col-md-2 col-form-label">{{ __('Numer domu') }}</label>
                         <div class="col-12 col-md-10">
@@ -210,7 +236,7 @@
                         </div>
                     </div>
 
-                    {{-- Numer lokalu --}}
+                    {{-- Flat number --}}
                     <div class="mb-3 row">
                         <label for="flat_number" class="col-12 col-md-2 col-form-label">{{ __('Numer lokalu') }}</label>
                         <div class="col-12 col-md-10">
@@ -223,7 +249,7 @@
                         </div>
                     </div>
 
-                    {{-- Zdjęcie --}}
+                    {{-- Image --}}
                     <div class="mb-3 row">
                         <label for="image" class="col-12 col-md-2 col-form-label">{{ __('Zdjęcie') }}</label>
                         <div class="col-12 col-md-10">
@@ -245,7 +271,7 @@
               </div>
             </div>
 
-            {{-- Doświadczenie zawodowe --}}
+            {{-- Work Expirience --}}
             <div class="accordion-item">
               <h2 class="accordion-header">
                 <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#expirience" aria-expanded="true" aria-controls="expirience">
@@ -258,7 +284,7 @@
               </div>
             </div>
 
-            {{-- Wykształcenie --}}
+            {{-- Education --}}
             <div class="accordion-item">
                 <h2 class="accordion-header">
                     <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#education" aria-expanded="true" aria-controls="education">
@@ -271,7 +297,7 @@
                 </div>
             </div>
 
-            {{-- Umiejętności i Kwalifikacje --}}
+            {{-- Skill --}}
             <div class="accordion-item">
                 <h2 class="accordion-header">
                     <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#skill" aria-expanded="true" aria-controls="skill">
@@ -284,7 +310,7 @@
                 </div>
             </div>
 
-            {{-- Zainteresowania --}}
+            {{-- Interests --}}
             <div class="accordion-item">
                 <h2 class="accordion-header">
                     <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#interests" aria-expanded="true" aria-controls="interests">
@@ -297,7 +323,7 @@
                 </div>
             </div>
 
-            {{-- Informacje dodatkowe --}}
+            {{-- Additional Information --}}
             <div class="accordion-item">
                 <h2 class="accordion-header">
                     <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#additional_information" aria-expanded="true" aria-controls="additional_information">
@@ -385,7 +411,7 @@
 
                             {{-- End Date --}}
                             <div class="mb-3 row">
-                                <label for="end_date${index}" class="col-12 col-md-2 col-form-label">${endDateText}</label>
+                                <label for="exp_end_date${index}" class="col-12 col-md-2 col-form-label">${endDateText}</label>
                                 <div class="col-12 col-md-10">
                                     <div class="input-group mb-3">
                                         <div class="input-group">
@@ -466,7 +492,7 @@
 
                             {{-- End Date --}}
                             <div class="mb-3 row">
-                                <label for="end_date${index}" class="col-12 col-md-2 col-form-label">${endDateText}</label>
+                                <label for="edu_end_date${index}" class="col-12 col-md-2 col-form-label">${endDateText}</label>
                                 <div class="col-12 col-md-10">
                                     <div class="input-group mb-3">
                                         <div class="input-group">

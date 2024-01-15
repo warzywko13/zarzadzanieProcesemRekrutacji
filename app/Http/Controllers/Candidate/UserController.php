@@ -19,6 +19,8 @@ class UserController extends Controller
             'email'             => $form['email'],
             'phone'             => $form['phone'],
             'street'            => $form['street'],
+            'city'              => $form['city'],
+            'post_code'         => $form['post_code'],
             'street_number'     => $form['street_number'],
             'flat_number'       => $form['flat_number'],
             'position_id'       => $form['position_id'] ?? null,
@@ -32,15 +34,17 @@ class UserController extends Controller
         return $data;
     }
 
-    public function validate_from_data(object $user, ?object $image, int &$error)
+    public function validate_from_data(object $user, ?object $image, int &$error): void
     {
         if($user->position_manual == 0) {
             if(empty($user->position_id)) {
                 $user->error['position_id'] = __('Docelowe stanowisko nie może być puste');
+                $error++;
             }
         } else {
             if(empty($user->position_name)) {
                 $user->error['position_name'] = __('Podaj stanowisko nie może być puste');
+                $error++;
             }
         }
 
@@ -81,7 +85,7 @@ class UserController extends Controller
         }
     }
 
-    public function get_personal_data(int $user_id)
+    public function get_personal_data(int $user_id): object
     {
         $user = User::where('id', $user_id)->where('deleted', 0)->first();
         $photo = Photo::where('id', $user->photo_id)->where('deleted', 0)->first();
@@ -93,7 +97,7 @@ class UserController extends Controller
         return $user;
     }
 
-    public function updateUser($user_id, $form_datas)
+    public function updateUser($user_id, $form_datas): void
     {
         if($form_datas['image']) {
             $form_datas['user']->photo_id = $this->updatePhoto($user_id, $form_datas);

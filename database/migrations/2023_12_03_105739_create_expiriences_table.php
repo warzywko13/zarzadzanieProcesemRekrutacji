@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('expiriences', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable();
-            $table->timestamp('start_date')->nullable();
-            $table->timestamp('end_date')->nullable();
+            $table->datetime('start_date')->nullable();
+            $table->datetime('end_date')->nullable();
             $table->integer('in_progress')->default(0);
             $table->string('name')->nullable();
             $table->string('position')->nullable();

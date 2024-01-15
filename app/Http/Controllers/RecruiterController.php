@@ -3,34 +3,24 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Position;
-use App\Models\User;
+use Illuminate\View\View;
 
 class RecruiterController extends Controller
 {
 
     private $filter;
 
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
         $this->middleware('recruiter');
         $this->filter = new FilterController();
     }
 
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
     public function index(Request $request)
     {
         $form = $request->all();
@@ -79,7 +69,7 @@ class RecruiterController extends Controller
                 ->where('deleted', 0)
                 ->first();
 
-            if($position) {
+            if($position && $position->id) {
                 $position->update([
                     'deleted' => 1,
                     'deleted_at' => date('Y-m-d H:i:s'),
@@ -193,7 +183,8 @@ class RecruiterController extends Controller
                 , u.availability
             FROM users u
             LEFT JOIN positions p ON u.position_id = p.id AND p.deleted = 0
-            WHERE u.deleted = 0 AND IFNULL(firstname, '') <> '' AND IFNULL(lastname, '') <> ''
+            WHERE u.deleted = 0 AND IFNULL(u.firstname, '') <> '' AND IFNULL(u.lastname, '') <> ''
+                AND u.is_recruiter = 0
             $where
             ";
 

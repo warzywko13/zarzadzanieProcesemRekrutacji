@@ -17,7 +17,7 @@ class EducationController extends Controller
                 'id'                => $form['edu_id'][$index],
                 'user_id'           => $user_id,
                 'start_date'        => $form['edu_start_date'][$index],
-                'end_date'          => $form['edu_end_date'][$index],
+                'end_date'          => $form['edu_end_date'][$index] ?? null,
                 'name'              => $form['edu_education_name'][$index],
                 'major'             => $form['edu_major'][$index],
                 'title'             => $form['edu_title'][$index],
@@ -39,6 +39,11 @@ class EducationController extends Controller
             if(empty($edu->start_date)) {
                 $edu->error['start_date'] = __('Data rozpoczęcia nie może być pusta');
                 $error++;
+            } else {
+                if(!$this->validateDate($edu->start_date, 'Y-m-d')) {
+                    $edu->error['start_date'] = __('Data rozpoczęcia jest nieprawidłowa. Proszę o poprawę');
+                    $error++;
+                }
             }
 
             if($edu->in_progress == 0) {
@@ -46,8 +51,13 @@ class EducationController extends Controller
                     $edu->error['end_date'] = __('Jeżeli nie jest zazaczone') . ' "' . __('Trwa nadal') . '" ' . __('Data zakończenia nie może być pusta');
                     $error++;
                 } else {
+                    if(!$this->validateDate($edu->end_date, 'Y-m-d')) {
+                        $edu->error['end_date'] = __('Data zakończenia jest nieprawidłowa. Proszę o poprawę');
+                        $error++;
+                    }
+
                     if(strtotime($edu->start_date) >= strtotime($edu->end_date)) {
-                        $edu->error['end_date'] = __('Data zakończenia nie może być większa od daty rozpoczęcia');
+                        $edu->error['end_date'] = __('Data zakończenia nie może być mniejsza od daty rozpoczęcia');
                         $error++;
                     }
                 }
@@ -61,7 +71,7 @@ class EducationController extends Controller
         }
     }
 
-    public function renderForm($educations = null, string $disabled = '')
+    public function renderForm($educations = null, string $disabled = ''): array
     {
         $result = null;
         $i = 0;
@@ -83,13 +93,13 @@ class EducationController extends Controller
         ];
     }
 
-    public function get_education(int $user_id, string $disabled = '')
+    public function get_education(int $user_id, string $disabled = ''): array
     {
         $educations = Education::where('user_id', $user_id)->where('deleted', 0)->cursor();
         return $this->renderForm($educations, $disabled);
     }
 
-    public function addUpdateEducation($user_id, $form_datas)
+    public function addUpdateEducation($user_id, $form_datas): void
     {
         // Delete Education
         $records = Education::where('user_id', $user_id)->where('deleted', 0)->get();
@@ -120,6 +130,9 @@ class EducationController extends Controller
 
         // Add Update Education
         foreach($form_datas['education'] as $edu) {
+            $edu->start_date = $edu->start_date ? $this->createDate($edu->start_date) : null;
+            $edu->end_date = $edu->end_date ? $this->createDate($edu->end_date) : null;
+
             if($edu->id) {
                 $record = Education::where('id', $edu->id)->where('deleted', 0);
                 if($record) {

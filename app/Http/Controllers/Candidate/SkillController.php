@@ -59,7 +59,7 @@ class SkillController extends Controller
         ];
     }
 
-    public function get_skills(int $user_id, string $disabled = '')
+    public function get_skills(int $user_id, string $disabled = ''): array
     {
         $skills = Skill::where('user_id', $user_id)->where('deleted', 0)->cursor();
         return $this->renderForm($skills, $disabled);

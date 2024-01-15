@@ -38,7 +38,7 @@ class InterestsController extends Controller
         }
     }
 
-    public function renderForm($interests = null, string $disabled = '')
+    public function renderForm($interests = null, string $disabled = ''): array
     {
         $result = null;
         $i = 0;
@@ -58,13 +58,13 @@ class InterestsController extends Controller
         ];
     }
 
-    public function get_interests(int $user_id, string $disabled = '')
+    public function get_interests(int $user_id, string $disabled = ''): array
     {
         $interests = Interest::where('user_id', $user_id)->where('deleted', 0)->cursor();
         return $this->renderForm($interests, $disabled);
     }
 
-    public function addUpdateInterest($user_id, $form_datas)
+    public function addUpdateInterest($user_id, $form_datas): void
     {
         $records = Interest::where('user_id', $user_id)->where('deleted', 0)->get();
         $to_delete = [];

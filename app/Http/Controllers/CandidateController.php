@@ -14,6 +14,8 @@ use App\Http\Controllers\Candidate\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class CandidateController extends Controller
 {
@@ -56,7 +58,7 @@ class CandidateController extends Controller
         return $data;
     }
 
-    private function validate_form_data($form_datas)
+    private function validate_form_data(array $form_datas): array
     {
         $error = 0;
 
@@ -90,8 +92,9 @@ class CandidateController extends Controller
 
         // If user is recruiter and Id exists show form
         if(Auth::user()->is_recruiter) {
+            $id = $request->input('id', 0);
 
-            if($id = $request->input('id', 0) !== 0) {
+            if($id !== 0) {
 
                 try {
                     $user = User::findOrFail($id);
@@ -124,24 +127,35 @@ class CandidateController extends Controller
             $form_datas = $this->validate_form_data($form_datas);
 
             if(!$form_datas['error']) {
-                // Everything ok let's add to db
+                try {
+                    DB::beginTransaction();
+                    // Everything ok let's add to db
 
-                // User
-                $this->UserController->updateUser($user_id, $form_datas);
+                    // User
+                    $this->UserController->updateUser($user_id, $form_datas);
 
-                // Expirience
-                $this->ExpirienceController->addUpdateExpirience($user_id, $form_datas);
+                    // Expirience
+                    $this->ExpirienceController->addUpdateExpirience($user_id, $form_datas);
 
-                // Education
-                $this->EducationController->addUpdateEducation($user_id, $form_datas);
+                    // Education
+                    $this->EducationController->addUpdateEducation($user_id, $form_datas);
 
-                // Skills
-                $this->SkillController->addUpdateSkill($user_id, $form_datas);
+                    // Skills
+                    $this->SkillController->addUpdateSkill($user_id, $form_datas);
 
-                // Interests
-                $this->InterestsController->addUpdateInterest($user_id, $form_datas);
+                    // Interests
+                    $this->InterestsController->addUpdateInterest($user_id, $form_datas);
+                    DB::commit();
 
-                return redirect()->route('addEdit')->with('status', __('Formularz zapisany pomyślnie'));
+                    return redirect()->route('addEdit')->with('status', __('Formularz zapisany pomyślnie'));
+                } catch (Throwable $e) {
+                    DB::rollback();
+
+                    return redirect()->route('addEdit')->with('error', __('Błąd podczas zapisu/aktualizacji danych'));
+                }
+
+            } else {
+                $data['error'] = $form_datas['error'];
             }
 
             $data['user'] = $form_datas['user'];

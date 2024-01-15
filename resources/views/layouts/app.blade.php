@@ -90,6 +90,12 @@
             </div>
         @endif
 
+        @if (isset($error))
+            <div class="alert alert-danger" role="alert">
+                {{ __('Formularz zawiera błędy. Proszę o poprawę!') }}
+            </div>
+        @endif
+
         <main class="py-4">
             @yield('content')
         </main>

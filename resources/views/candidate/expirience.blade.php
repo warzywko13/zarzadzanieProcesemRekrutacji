@@ -18,11 +18,11 @@
 
         {{-- End Date --}}
         <div class="mb-3 row">
-            <label for="end_date{{ $index }}" class="col-12 col-md-2 col-form-label">{{ __('Data zakończenia') }}</label>
+            <label for="exp_end_date{{ $index }}" class="col-12 col-md-2 col-form-label">{{ __('Data zakończenia') }}</label>
             <div class="col-12 col-md-10">
                 <div class="input-group mb-3">
                     <div class="input-group">
-                        <input type="date" {{ $disabled }} class="form-control" @if(isset($exp->in_progress) && $exp->in_progress == 1) aria-disabled="true" @endif  id="exp_end_date{{ $index }}" name="exp_end_date[]" value="{{ isset($exp->end_date) ? date('Y-m-d', strtotime($exp->end_date)) : '' }}">
+                        <input type="date" {{ $disabled }} {{ isset($exp->in_progress) && $exp->in_progress == 1 ? 'disabled' : '' }} class="form-control" @if(isset($exp->in_progress) && $exp->in_progress == 1) aria-disabled="true" @endif  id="exp_end_date{{ $index }}" name="exp_end_date[]" value="{{ isset($exp->end_date) ? date('Y-m-d', strtotime($exp->end_date)) : '' }}">
                         <div class="input-group-text">
                             <input
                                 class="form-check-input mt-0 me-2"

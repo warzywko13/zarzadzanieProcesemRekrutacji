@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 
 class FilterController extends Controller
 {
-    public function createPagination(array $results)
+    public function createPagination(array $results): LengthAwarePaginator
     {
         $perPage = 10;
         $currentPage = Paginator::resolveCurrentPage();
@@ -36,10 +36,12 @@ class FilterController extends Controller
         return " AND " . $prefix . " IN (" . $result . ")";
     }
 
-    public function get_user_filter_data()
+    public function get_user_filter_data(): array
     {
         $filter = [];
-        $filter['users'] = DB::select("SELECT id, CONCAT(firstname, ' ', lastname) as name FROM users WHERE deleted = 0 ORDER BY firstname");
+        $filter['users'] = DB::select("SELECT id, CONCAT(firstname, ' ', lastname) as name FROM users WHERE deleted = 0
+                                                                 AND IFNULL(firstname, '') <> '' AND IFNULL(lastname, '') <> '' AND is_recruiter = 0
+                                                               ORDER BY firstname");
         $filter['city'] = DB::select("SELECT city as id, city as name FROM users WHERE deleted = 0 GROUP BY city ORDER BY city");
         $filter['phone'] = DB::select("SELECT phone as id, phone as name FROM users WHERE deleted = 0 GROUP BY phone ORDER BY phone");
         $filter['sex'] = $this->get_sex();
@@ -48,7 +50,7 @@ class FilterController extends Controller
         return $filter;
     }
 
-    public function get_positions_filter_data()
+    public function get_positions_filter_data(): array
     {
         $filter = [];
         $filter['positions'] = $this->get_position();
@@ -56,7 +58,7 @@ class FilterController extends Controller
         return $filter;
     }
 
-    public function get_candidate_filter_data()
+    public function get_candidate_filter_data(): array
     {
         $filter = [];
         $filter['availability'] = $this->get_availability();

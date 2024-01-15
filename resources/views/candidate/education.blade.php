@@ -19,11 +19,11 @@
 
         {{-- End Date --}}
         <div class="mb-3 row">
-            <label for="end_date{{ $index }}" class="col-12 col-md-2 col-form-label">{{ __('Data zakończenia') }}</label>
+            <label for="edu_end_date{{ $index }}" class="col-12 col-md-2 col-form-label">{{ __('Data zakończenia') }}</label>
             <div class="col-12 col-md-10">
                 <div class="input-group mb-3">
                     <div class="input-group">
-                    <input type="date" {{ $disabled }} class="form-control" @if(isset($edu->in_progress) && $edu->in_progress == 1) aria-disabled="true" @endif  id="edu_end_date{{ $index }}" name="edu_end_date[]" value="{{ isset($edu->end_date) ? date('Y-m-d', strtotime($edu->end_date)) : '' }}">
+                    <input type="date" {{ $disabled }} {{ isset($edu->in_progress) && $edu->in_progress == 1 ? 'disabled' : '' }} class="form-control" @if(isset($edu->in_progress) && $edu->in_progress == 1) aria-disabled="true" @endif  id="edu_end_date{{ $index }}" name="edu_end_date[]" value="{{ isset($edu->end_date) ? date('Y-m-d', strtotime($edu->end_date)) : '' }}">
                     <div class="input-group-text">
                         <input
                             class="form-check-input mt-0 me-2"

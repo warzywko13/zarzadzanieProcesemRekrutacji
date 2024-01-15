@@ -13,12 +13,18 @@ Projekt aplikacji zarządzania procesem rekrutacji.
 
 1. Skopiowanie repozytorium na dysk lokalny.
 2. Skonfigurowanie pliku ".env".
-3. Skompilowanie kodu JS poprzez komendę.
+3. Zainstalownaie projektu:
+```
+    composer install
+    npm install
+```
+
+4. Skompilowanie kodu JS poprzez komendę.
 ```
     npm run build
 ```
 
-4. Uruchomieni kodu laravel
+5Uruchomieni kodu laravel
 
 ```
     php artisan serve

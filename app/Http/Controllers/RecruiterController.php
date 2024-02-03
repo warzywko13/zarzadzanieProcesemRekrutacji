@@ -122,7 +122,7 @@ class RecruiterController extends Controller
 
         // If id exists
         if($id = $request->input('id')) {
-            $data['position'] = Position::findOrFail($id)->where('deleted', 0)->first();
+            $data['position'] = Position::where('id', $id)->where('deleted', 0)->first();
         }
 
 

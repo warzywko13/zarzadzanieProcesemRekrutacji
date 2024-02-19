@@ -6,11 +6,11 @@
             <label for="int_name{{ $index }}" class="col-12 col-md-2 col-form-label">{{ __('Nazwa zainteresowania') }}</label>
             <div class="col-12 col-md-10">
                 <input {{ $disabled }} type="text" class="form-control" id="int_name{{ $index }}" name="int_name[]" value="{{ isset($int->name) ? $int->name : '' }}">
-                @isset($int->error['name'])
+                @if(isset($int->error['name']))
                     <p class="text-danger fw-bold">
                         {{ $int->error['name'] }}
                     </p>
-                @endisset
+                @endif
             </div>
         </div>
     </div>

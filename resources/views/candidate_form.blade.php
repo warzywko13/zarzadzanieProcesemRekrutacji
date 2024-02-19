@@ -305,7 +305,7 @@
                     </button>
                 </h2>
                 <div id="skill" class="accordion-collapse collapse show">
-                    <input id="skill_last" value={{ $skill['count'] }} type="hidden" >
+                    <input id="skill_last" value="{{ $skill['count'] }}" type="hidden" >
                     {!! $skill['result'] !!}
                 </div>
             </div>
@@ -318,7 +318,7 @@
                     </button>
                 </h2>
                 <div id="interests" class="accordion-collapse collapse show">
-                    <input id="interests_last" value={{ $interests['count'] }} type="hidden" >
+                    <input id="interests_last" value="{{ $interests['count'] }}" type="hidden" >
                     {!! $interests['result'] !!}
                 </div>
             </div>
